@@ -198,6 +198,8 @@ LegalLens/
   - 15 files, initial commit on `main`, pushed to `origin/main`.
 - **`8b27cac` (`feature/milestone-1-dataset-audit`):** `feat(audit): implement reproducible Jud-IPL dataset audit and report`
   - Created `src/config.py`, `src/data_audit.py`, `docs/milestone_1_dataset_audit.md`, updated `.gitignore`.
+- **`639eecc` (`feature/milestone-1-dataset-audit`):** `docs: create persistent project state document LegalLensBackup.md`
+  - Created `docs/LegalLensBackup.md` as living handoff document.
 
 ---
 
@@ -205,7 +207,7 @@ LegalLens/
 
 - [x] **Milestone 0: Scaffolding & Environment Setup** (Complete)
 - [x] **Milestone 1: Dataset Acquisition & Audit** (Complete)
-- [ ] **Milestone 2: Exploratory Data Analysis (EDA)** (**In Progress**)
+- [x] **Milestone 2: Exploratory Data Analysis (EDA)** (Complete)
 - [ ] **Milestone 3: Data Cleaning & Stratified Splitting** (Pending Milestone 2 Review)
 - [ ] **Milestone 4: Majority Baseline & Logistic Regression**
 - [ ] **Milestone 5: TF-IDF & Linear SVM**
@@ -234,6 +236,9 @@ LegalLens/
 4. **2026-10-11 — Primary Metric:**
    - *Decision:* Standardize on Macro-F1 and per-class Recall.
    - *Reason:* Mitigates ~3.9 : 1 Civil dominance from inflating accuracy while hiding Criminal misclassifications.
+5. **2026-10-11 — Duplicate Pruning & Deduplication Policy (Milestone 2):**
+   - *Decision:* Prune the 2 conflicting-label clusters (6 rows) and deduplicate to exactly 1 unique judgment text per hash (33,723 distinct judgments) before train/validation/test splitting.
+   - *Reason:* Prevents severe cross-split data leakage/contamination and eliminates conflicting supervisory signals.
 
 ---
 
@@ -244,22 +249,22 @@ LegalLens/
 - **Problem 2:** Discrepancy between published row count (42,342) and raw CSV rows (53,446).
   - *Resolution:* Streamed full file in audit; traced difference to 9,834 unannotated rows and 2,236 empty texts. Verified true usable count is 41,376.
 - **Problem 3:** 2 duplicate text instances found with conflicting class labels.
-  - *Resolution:* Isolated IDs and text hashes for forensic inspection in Milestone 2.
+  - *Resolution:* Forensic analysis in Milestone 2 showed Conflict 1 is an Arms Act conviction mislabeled civil in one row; Conflict 2 is an Art 32 police investigation writ with institutional registry ambiguity. Recommended dropping both clusters (6 rows).
 
 ---
 
 # 15. CURRENT STATE SNAPSHOT
 
-- **Current Milestone:** Milestone 2 — Exploratory Data Analysis (EDA)
+- **Current Milestone:** Milestone 2 — Exploratory Data Analysis (EDA) Complete; ready for Milestone 3 (Cleaning & Splitting).
 - **Current Branch:** `feature/milestone-1-dataset-audit`
-- **Last Completed Action:** Milestone 1 audit approved; created `docs/LegalLensBackup.md`.
-- **Last Verified Result:** Jud-IPL audit completed (41,376 usable texts; 3.90:1 imbalance; 7,651 duplicate texts).
-- **Current Task:** Execute Milestone 2 deep-dive EDA (duplicate group sizes, conflicting cases forensics, n-gram frequencies, class vocabulary).
-- **Current Blocker:** None.
-- **Next Action:** Run EDA analysis script `src/eda.py` and generate figures/tables.
-- **Files Recently Changed:** `docs/LegalLensBackup.md` (created).
-- **Last Commit:** `8b27cac` (`feat(audit): implement reproducible Jud-IPL dataset audit and report`).
-- **Working Tree Status:** Clean except new `docs/LegalLensBackup.md` awaiting commit.
+- **Last Completed Action:** Milestone 2 EDA executed (`src/eda.py`), notebook created (`notebooks/01_dataset_eda.ipynb`), full report generated (`docs/milestone_2_eda_report.md`), metrics saved (`outputs/metrics/eda_metrics.json`), and figures produced (`outputs/figures/`).
+- **Last Verified Result:** 33,723 unique clean judgments identified (26,117 Civil, 7,606 Criminal, 3.43:1 imbalance). High discriminative signal confirmed in unigram/bigram domain vocabulary.
+- **Current Task:** Awaiting user & ChatGPT review of Milestone 2 EDA findings and approval of the recommended cleaning policy.
+- **Current Blocker:** Awaiting confirmation to proceed to Milestone 3.
+- **Next Action:** Implement Milestone 3 data cleaning (`src/preprocessing.py`) and stratified train/val/test splitting (`src/dataset_split.py`).
+- **Files Recently Changed:** `src/eda.py`, `notebooks/01_dataset_eda.ipynb`, `docs/milestone_2_eda_report.md`, `docs/LegalLensBackup.md`.
+- **Working Tree Status:** Untracked/modified EDA deliverables ready to be committed.
+
 
 ---
 
