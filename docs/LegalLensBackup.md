@@ -14,8 +14,8 @@
 - **Repository:** `https://github.com/Mercer18/LegalLens`
 - **Current Git Branch:** `feature/milestone-1-dataset-audit`
 - **Base Branch:** `main` (clean, verified, synced at commit `0b3c349`)
-- **Current Milestone:** **Milestone 2: Exploratory Data Analysis (EDA)**
-- **Overall Status:** Milestone 0 (Scaffolding) and Milestone 1 (Audit) complete; Milestone 2 active.
+- **Current Milestone:** **Milestone 5: Error Analysis & Final Model Selection (Complete)**
+- **Overall Status:** Milestones 0 through 5 complete; awaiting approval before Milestone 6 (Final Test Evaluation & Reporting / Streamlit Deployment).
 
 ---
 
@@ -305,7 +305,9 @@ LegalLens/
    - *Decision:* Partitioned into 80/10/10 (26,973 Train / 3,372 Val / 3,372 Test) with `random_state=42`, and froze test IDs/hashes in `data/processed/frozen_test_ids.json`.
 8. **2026-10-11 — Model Benchmark Selection (Milestone 4):**
    - *Decision:* Selected **TF-IDF + Linear SVM (Balanced)** as the leading validation architecture (**0.9107 Macro-F1, 93.43% Criminal Recall, 93.97% Civil Recall**). Logistic Regression (Balanced) retained as strong probabilistic alternative (0.8886 Macro-F1, 94.31% Criminal Recall).
-
+9. **2026-10-11 — Validation Error Analysis & Final Candidate Selection (Milestone 5):**
+   - *Decision:* Completed error analysis on the 207 validation errors of balanced Linear SVM. Demonstrated that truncation does not degrade accuracy, while longer complex judgments have slightly higher confusion. Isolated 4 dominant legal failure modes (Contempt overlap, Police misconduct writs, Anti-corruption administrative overlap, Quasi-criminal commercial offenses).
+   - *Targeted Tuning Outcome:* Expanding vocabulary to 40,000 features improves validation Macro-F1 to **0.9148** and Criminal Recall to **93.72%** (Accuracy 94.16%). Recommended **Linear SVM (Balanced, C=1.0, 40,000 features, 1-2 ngrams)** as the final model candidate for LegalLens.
 
 ---
 
@@ -319,20 +321,24 @@ LegalLens/
   - *Resolution:* Pruned all 6 records belonging to both conflicting clusters in Milestone 3. Verified remaining 7,327 duplicate clusters are 100.0% label-consistent.
 - **Problem 4:** Potential cross-split contamination from 7,653 duplicate judgment copies.
   - *Resolution:* Deduplicated to 33,717 distinct judgments prior to splitting. Verified zero hash or ID overlap across Train, Val, and Test.
+- **Problem 5:** Windows console CP1252 character encoding error when printing Unicode arrow (`→`) in terminal scripts.
+  - *Resolution:* Replaced Unicode arrows with ASCII `->` across print statements in `src/error_analysis.py`.
+- **Problem 6:** Seaborn 0.13 categorical palette assignment deprecation warning and boolean mapping.
+  - *Resolution:* Re-mapped boolean flags to explicit categorical string labels (`"Correct"`, `"Misclassified"`) and assigned `hue` parameter in seaborn boxplots.
 
 ---
 
 # 15. CURRENT STATE SNAPSHOT
 
-- **Current Milestone:** Milestone 3 Complete; ready for Milestone 4 (Majority Baseline & Logistic Regression).
+- **Current Milestone:** Milestone 5 Complete; ready for Milestone 6 (Final Test Evaluation & Reporting / Streamlit Deployment).
 - **Current Branch:** `feature/milestone-1-dataset-audit`
-- **Last Completed Action:** Milestone 3 Cleaning & Splitting completed (`src/preprocessing.py`, `src/dataset_split.py`), unit tests passed (7/7 in `pytest`), report written (`docs/milestone_3_cleaning_and_split_report.md`), test set frozen.
-- **Last Verified Result:** Clean deduplicated corpus: 33,717 judgments (26,867 Civil, 6,850 Criminal, 3.92 : 1). Splits: Train = 26,973, Val = 3,372, Test = 3,372. Zero overlap verified.
-- **Current Task:** Awaiting user and reviewer review of Milestone 3 dataset statistics.
-- **Current Blocker:** Awaiting approval to proceed to Milestone 4.
-- **Next Action:** Implement Milestone 4 Majority Baseline & TF-IDF Logistic Regression in `src/models.py`, `src/features.py`, and `src/train.py`.
-- **Files Recently Changed:** `src/config.py`, `src/preprocessing.py`, `src/dataset_split.py`, `tests/test_preprocessing.py`, `tests/test_dataset_split.py`, `docs/milestone_3_cleaning_and_split_report.md`, `docs/LegalLensBackup.md`.
-- **Working Tree Status:** Clean except new Milestone 3 files ready to be committed.
+- **Last Completed Action:** Milestone 5 Error Analysis & Model Selection completed (`src/error_analysis.py`, `tests/test_error_analysis.py`), 11/11 unit tests passing, report generated (`docs/milestone_5_error_analysis_and_model_selection.md`), metrics and plots saved.
+- **Last Verified Result:** Validation champion model commits 207 errors out of 3,372 validation judgments (6.14% error rate). Targeted tuning demonstrated 40,000 features boosts validation Macro-F1 from 0.9107 to 0.9148 and Criminal Recall to 93.72%. Zero test data touched or leaked.
+- **Current Task:** Awaiting user and reviewer review of Milestone 5 results.
+- **Current Blocker:** Awaiting approval before proceeding to final test evaluation or app deployment.
+- **Next Action:** Upon approval, proceed to Milestone 6: unfreezing test set for final one-shot benchmark evaluation, final documentation, and Streamlit app implementation.
+- **Files Recently Changed:** `src/error_analysis.py`, `tests/test_error_analysis.py`, `outputs/metrics/milestone_5_tuning_metrics.json`, `outputs/figures/error_length_and_truncation_distribution.png`, `outputs/figures/top_model_coefficients.png`, `docs/milestone_5_error_analysis_and_model_selection.md`, `docs/LegalLensBackup.md`.
+- **Working Tree Status:** Clean, all tests passing.
 
 
 
