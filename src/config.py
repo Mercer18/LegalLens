@@ -1,6 +1,7 @@
 """
 LegalLens Configuration & Constants
-Defines reproducible random seeds, project directory paths, and column names.
+Defines reproducible random seeds, project directory paths, column names,
+and file destinations for processed data and split partitions.
 """
 
 from pathlib import Path
@@ -15,6 +16,20 @@ INTERIM_DATA_DIR = DATA_DIR / "interim"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 
 RAW_DATA_FILE = RAW_DATA_DIR / "case_files_total.csv"
+CLEANED_DATA_FILE = INTERIM_DATA_DIR / "cleaned_judgments.parquet"
+CLEANED_DATA_CSV = INTERIM_DATA_DIR / "cleaned_judgments.csv"
+
+# Split Destination Files
+TRAIN_FILE = PROCESSED_DATA_DIR / "train.parquet"
+VAL_FILE = PROCESSED_DATA_DIR / "val.parquet"
+TEST_FILE = PROCESSED_DATA_DIR / "test.parquet"
+
+TRAIN_CSV = PROCESSED_DATA_DIR / "train.csv"
+VAL_CSV = PROCESSED_DATA_DIR / "val.csv"
+TEST_CSV = PROCESSED_DATA_DIR / "test.csv"
+
+FROZEN_TEST_IDS_FILE = PROCESSED_DATA_DIR / "frozen_test_ids.json"
+SPLIT_METADATA_FILE = PROCESSED_DATA_DIR / "split_metadata.json"
 
 # Output Directories
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
@@ -40,7 +55,17 @@ COL_PROOF = "proof_sentence"
 COL_TOKENS = "tokens"
 COL_SENTENCES = "sentences"
 
+# Modeling Clean Columns
+COL_CLEAN_TEXT = "text"
+COL_CLEAN_TARGET = "category"
+COL_TEXT_HASH = "text_hash"
+
 # Valid Target Labels
 TARGET_CIVIL = "civil"
 TARGET_CRIMINAL = "criminal"
 VALID_TARGETS = [TARGET_CIVIL, TARGET_CRIMINAL]
+
+# Split Ratios
+TRAIN_RATIO = 0.80
+VAL_RATIO = 0.10
+TEST_RATIO = 0.10

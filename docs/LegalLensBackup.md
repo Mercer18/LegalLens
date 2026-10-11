@@ -200,6 +200,8 @@ LegalLens/
   - Created `src/config.py`, `src/data_audit.py`, `docs/milestone_1_dataset_audit.md`, updated `.gitignore`.
 - **`639eecc` (`feature/milestone-1-dataset-audit`):** `docs: create persistent project state document LegalLensBackup.md`
   - Created `docs/LegalLensBackup.md` as living handoff document.
+- **`3a6d47c` (`feature/milestone-1-dataset-audit`):** `feat(eda): implement Milestone 2 EDA pipeline, forensic analysis, notebook, and report`
+  - Created `src/eda.py`, `notebooks/01_dataset_eda.ipynb`, `docs/milestone_2_eda_report.md`, updated backup.
 
 ---
 
@@ -208,8 +210,8 @@ LegalLens/
 - [x] **Milestone 0: Scaffolding & Environment Setup** (Complete)
 - [x] **Milestone 1: Dataset Acquisition & Audit** (Complete)
 - [x] **Milestone 2: Exploratory Data Analysis (EDA)** (Complete)
-- [ ] **Milestone 3: Data Cleaning & Stratified Splitting** (Pending Milestone 2 Review)
-- [ ] **Milestone 4: Majority Baseline & Logistic Regression**
+- [x] **Milestone 3: Data Cleaning & Stratified Splitting** (Complete)
+- [ ] **Milestone 4: Majority Baseline & Logistic Regression** (Next)
 - [ ] **Milestone 5: TF-IDF & Linear SVM**
 - [ ] **Milestone 6: Model Comparison & Evaluation**
 - [ ] **Milestone 7: Error Analysis**
@@ -237,8 +239,14 @@ LegalLens/
    - *Decision:* Standardize on Macro-F1 and per-class Recall.
    - *Reason:* Mitigates ~3.9 : 1 Civil dominance from inflating accuracy while hiding Criminal misclassifications.
 5. **2026-10-11 — Duplicate Pruning & Deduplication Policy (Milestone 2):**
-   - *Decision:* Prune the 2 conflicting-label clusters (6 rows) and deduplicate to exactly 1 unique judgment text per hash (33,723 distinct judgments) before train/validation/test splitting.
+   - *Decision:* Prune the 2 conflicting-label clusters (6 rows) and deduplicate to exactly 1 unique judgment text per hash before train/validation/test splitting.
    - *Reason:* Prevents severe cross-split data leakage/contamination and eliminates conflicting supervisory signals.
+6. **2026-10-11 — Whitespace Normalization Impact (Milestone 3):**
+   - *Decision:* Applied internal whitespace/newline collapsing `re.sub(r"\s+", " ", text)`, which merged 6 additional formatting-duplicate pairs into verified consistent clusters, resulting in exactly **33,717 unique clean judgments**.
+   - *Reason:* Eliminates identical text duplicates that differ only by newline wrapping.
+7. **2026-10-11 — Stratified Split & Test Freezing (Milestone 3):**
+   - *Decision:* Partitioned into 80/10/10 (26,973 Train / 3,372 Val / 3,372 Test) with `random_state=42`, and froze test IDs/hashes in `data/processed/frozen_test_ids.json`.
+   - *Reason:* Guarantees zero test-leakage and reproducibility across all future experiments.
 
 ---
 
@@ -249,21 +257,24 @@ LegalLens/
 - **Problem 2:** Discrepancy between published row count (42,342) and raw CSV rows (53,446).
   - *Resolution:* Streamed full file in audit; traced difference to 9,834 unannotated rows and 2,236 empty texts. Verified true usable count is 41,376.
 - **Problem 3:** 2 duplicate text instances found with conflicting class labels.
-  - *Resolution:* Forensic analysis in Milestone 2 showed Conflict 1 is an Arms Act conviction mislabeled civil in one row; Conflict 2 is an Art 32 police investigation writ with institutional registry ambiguity. Recommended dropping both clusters (6 rows).
+  - *Resolution:* Pruned all 6 records belonging to both conflicting clusters in Milestone 3. Verified remaining 7,327 duplicate clusters are 100.0% label-consistent.
+- **Problem 4:** Potential cross-split contamination from 7,653 duplicate judgment copies.
+  - *Resolution:* Deduplicated to 33,717 distinct judgments prior to splitting. Verified zero hash or ID overlap across Train, Val, and Test.
 
 ---
 
 # 15. CURRENT STATE SNAPSHOT
 
-- **Current Milestone:** Milestone 2 — Exploratory Data Analysis (EDA) Complete; ready for Milestone 3 (Cleaning & Splitting).
+- **Current Milestone:** Milestone 3 Complete; ready for Milestone 4 (Majority Baseline & Logistic Regression).
 - **Current Branch:** `feature/milestone-1-dataset-audit`
-- **Last Completed Action:** Milestone 2 EDA executed (`src/eda.py`), notebook created (`notebooks/01_dataset_eda.ipynb`), full report generated (`docs/milestone_2_eda_report.md`), metrics saved (`outputs/metrics/eda_metrics.json`), and figures produced (`outputs/figures/`).
-- **Last Verified Result:** 33,723 unique clean judgments identified (26,117 Civil, 7,606 Criminal, 3.43:1 imbalance). High discriminative signal confirmed in unigram/bigram domain vocabulary.
-- **Current Task:** Awaiting user & ChatGPT review of Milestone 2 EDA findings and approval of the recommended cleaning policy.
-- **Current Blocker:** Awaiting confirmation to proceed to Milestone 3.
-- **Next Action:** Implement Milestone 3 data cleaning (`src/preprocessing.py`) and stratified train/val/test splitting (`src/dataset_split.py`).
-- **Files Recently Changed:** `src/eda.py`, `notebooks/01_dataset_eda.ipynb`, `docs/milestone_2_eda_report.md`, `docs/LegalLensBackup.md`.
-- **Working Tree Status:** Untracked/modified EDA deliverables ready to be committed.
+- **Last Completed Action:** Milestone 3 Cleaning & Splitting completed (`src/preprocessing.py`, `src/dataset_split.py`), unit tests passed (7/7 in `pytest`), report written (`docs/milestone_3_cleaning_and_split_report.md`), test set frozen.
+- **Last Verified Result:** Clean deduplicated corpus: 33,717 judgments (26,867 Civil, 6,850 Criminal, 3.92 : 1). Splits: Train = 26,973, Val = 3,372, Test = 3,372. Zero overlap verified.
+- **Current Task:** Awaiting user and reviewer review of Milestone 3 dataset statistics.
+- **Current Blocker:** Awaiting approval to proceed to Milestone 4.
+- **Next Action:** Implement Milestone 4 Majority Baseline & TF-IDF Logistic Regression in `src/models.py`, `src/features.py`, and `src/train.py`.
+- **Files Recently Changed:** `src/config.py`, `src/preprocessing.py`, `src/dataset_split.py`, `tests/test_preprocessing.py`, `tests/test_dataset_split.py`, `docs/milestone_3_cleaning_and_split_report.md`, `docs/LegalLensBackup.md`.
+- **Working Tree Status:** Clean except new Milestone 3 files ready to be committed.
+
 
 
 ---
