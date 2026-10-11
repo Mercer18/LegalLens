@@ -17,7 +17,7 @@ CUSTOM_STOP_WORDS = list(ENGLISH_STOP_WORDS - LEGAL_PRESERVED_TOKENS)
 
 def build_tfidf_vectorizer(
     ngram_range: Tuple[int, int] = (1, 2),
-    max_features: int = 30000,
+    max_features: int = 40000,
     min_df: int = 3,
     max_df: float = 0.90,
     sublinear_tf: bool = True,

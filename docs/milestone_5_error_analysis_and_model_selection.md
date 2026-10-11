@@ -19,7 +19,7 @@ All diagnostics and tuning iterations were conducted **strictly on the validatio
    - **False Criminals (True Civil $\to$ Predicted Criminal):** 162 errors (6.03% of Civil cases).
    - **False Civils (True Criminal $\to$ Predicted Civil):** 45 errors (6.57% of Criminal cases).
 2. **Document Length & Complexity:** Errors correlate with longer, more complex judgments. Misclassified judgments have a median word count of **3,282 words** versus **2,736 words** for correctly classified judgments.
-3. **Truncation Impact:** Truncated texts (at 32,765 characters) represent an negligible fraction of the validation split and exhibit no disproportionate error penalty ($0\%$ of truncated texts failed). Errors stem from substantive jurisdictional and legal overlaps rather than mechanical clipping.
+3. **Truncation Evaluation:** No validation cases were identified as truncated under the 32,765-character criterion, so truncation could not be evaluated as a source of validation errors. Errors stem from substantive jurisdictional and legal overlaps.
 4. **Dominant Failure Patterns:**
    - *Contempt of Court Overlap:* Civil contempt petitions invoking penal punishment terms (`punishment`, `imprisonment`, `state`).
    - *Constitutional Writs on Police/Crime:* Article 32/226 civil petitions litigating police inaction, CBI investigations, or encounter deaths.
@@ -61,13 +61,13 @@ The balanced class weighting slightly shifts the decision hyperplane toward prot
 | **Correctly Classified** | 2,983.9 words | 2,736.0 words | 1,416.0 – 4,737.0 words |
 | **Misclassified (Errors)** | 3,341.9 words | 3,282.0 words | 1,994.5 – 5,204.0 words |
 
-*Finding:* Misclassified judgments are on average **546 words longer** at the median. Longer Indian court judgments tend to cite extensive multi-disciplinary precedent (e.g. citing criminal jurisprudence in civil writs or vice-versa), confusing surface n-gram frequencies.
+*Finding:* Misclassified cases had a median length 546 words greater than correctly classified cases. Longer Indian court judgments tend to cite extensive multi-disciplinary precedent (e.g. citing criminal jurisprudence in civil writs or vice-versa), confusing surface n-gram frequencies.
 
 ### 3.2 32,765-Character Truncation Forensic
 In the raw dataset, Excel/CSV string limits artificially capped a subset of judgments at 32,765 characters. In the cleaned stratified validation set:
 - Truncated judgments count in validation: 0
 - Non-truncated judgments error rate: 6.14% (207 / 3,372)
-- *Conclusion:* Truncation does **not** disproportionately bias or degrade classifier accuracy. The 30,000 n-gram features effectively capture the procedural and jurisdictional essence within standard judgment headers, factual summaries, and final operative orders.
+- *Conclusion:* No validation cases were identified as truncated under the 32,765-character criterion, so truncation could not be evaluated as a source of validation errors.
 
 ---
 

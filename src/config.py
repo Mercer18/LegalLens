@@ -38,6 +38,7 @@ REPORTS_DIR = OUTPUTS_DIR / "reports"
 METRICS_DIR = OUTPUTS_DIR / "metrics"
 
 MODELS_DIR = PROJECT_ROOT / "models"
+FINAL_MODEL_FILE = MODELS_DIR / "final_linear_svm_pipeline.joblib"
 DOCS_DIR = PROJECT_ROOT / "docs"
 
 # Reproducibility
