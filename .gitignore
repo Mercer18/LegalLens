@@ -1,0 +1,98 @@
+# ==============================================================================
+# Byte-compiled / optimized / DLL files
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==============================================================================
+# Virtual Environments
+# ==============================================================================
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# ==============================================================================
+# Environment variables and secrets
+# ==============================================================================
+.env
+.env.*
+!.env.example
+secrets.toml
+*.pem
+*.key
+
+# ==============================================================================
+# IDEs & OS Files
+# ==============================================================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==============================================================================
+# Datasets (Keep directory structure with .gitkeep, ignore all raw/processed data)
+# ==============================================================================
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Catch-all for large data files anywhere in workspace
+*.csv
+*.tsv
+*.jsonl
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# ==============================================================================
+# Model checkpoints & serialized artifacts
+# ==============================================================================
+models/*
+!models/.gitkeep
+*.joblib
+*.pkl
+*.pickle
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# ==============================================================================
+# Output artifacts (Keep folder structure, ignore generated runs)
+# ==============================================================================
+outputs/figures/*
+!outputs/figures/.gitkeep
+outputs/reports/*
+!outputs/reports/.gitkeep
+outputs/metrics/*
+!outputs/metrics/.gitkeep
+
+# ==============================================================================
+# Jupyter Notebooks & Caches
+# ==============================================================================
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# ==============================================================================
+# Testing & Coverage
+# ==============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
