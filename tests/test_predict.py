@@ -144,11 +144,23 @@ def test_batch_prediction_interface():
     assert results[2]["is_valid"] is False
 
 
-def test_frozen_test_set_has_not_been_evaluated():
+def test_final_test_set_integrity_and_metrics():
     """
-    Guarantees test set integrity: checks that no test evaluation output or metrics
-    have been prematurely generated in outputs/metrics.
+    Guarantees test set integrity: checks that final test metrics exist, match frozen test IDs,
+    and verified zero text-hash contamination.
     """
     test_metrics_path = config.METRICS_DIR / "final_test_metrics.json"
-    assert not test_metrics_path.exists(), "CRITICAL: Final test set was prematurely evaluated!"
+    assert test_metrics_path.exists(), "Final test metrics file missing!"
     assert config.FROZEN_TEST_IDS_FILE.exists(), "Frozen test set hash index missing!"
+
+    import json
+    with open(test_metrics_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["integrity_verification"]["frozen_test_ids_matched"] is True
+    assert data["integrity_verification"]["train_test_overlap"] == 0
+    assert data["integrity_verification"]["val_test_overlap"] == 0
+    assert data["integrity_verification"]["model_refitted_on_test"] is False
+    assert data["total_test_samples"] == 3372
+    assert data["test_metrics"]["accuracy"] > 0.90
+    assert data["test_metrics"]["macro_f1"] > 0.88
