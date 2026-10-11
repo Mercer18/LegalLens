@@ -146,7 +146,66 @@ Indian Court Judgment (Full Text)
 
 # 9. EXPERIMENT LOG
 
-*(No models trained yet. Experiments will be sequentially appended in Milestones 4–8).*
+## Experiment 1: Majority Class Baseline
+- **Date:** 2026-10-11
+- **Architecture:** `DummyClassifier(strategy='most_frequent')`
+- **Features:** None (predicts constant majority class `civil`)
+- **Evaluation Partition:** Validation Set (3,372 judgments: 2,687 Civil, 685 Criminal)
+- **Validation Results:**
+  - Accuracy: 0.7969
+  - Macro-F1: 0.4435 (Macro-Precision: 0.3984, Macro-Recall: 0.5000)
+  - Civil Recall: 1.0000 | Civil F1: 0.8869
+  - Criminal Recall: 0.0000 | Criminal F1: 0.0000
+- **Confusion Matrix:** True Civil Pred Civil: 2,687 | True Crim Pred Crim: 0 | False Negatives: 685
+- **Observation:** Confirms that Accuracy is misleading in imbalanced legal data; 79.69% accuracy fails to identify a single criminal case.
+
+## Experiment 2: TF-IDF + Logistic Regression (Default Weights)
+- **Date:** 2026-10-11
+- **Architecture:** `LogisticRegression(C=1.0, class_weight=None, solver='lbfgs', random_state=42)`
+- **Features:** TF-IDF unigrams + bigrams `(1, 2)`, max_features=30,000, sublinear_tf=True, min_df=3, max_df=0.90
+- **Validation Results:**
+  - Accuracy: 0.9267
+  - Macro-F1: 0.8895
+  - Criminal Recall: 0.8526 | Criminal Precision: 0.8000 | Criminal F1: 0.8254
+  - Civil Recall: 0.9457 | Civil Precision: 0.9618 | Civil F1: 0.9536
+- **Confusion Matrix:** True Civil Pred Civil: 2,541 (146 FP) | True Crim Pred Crim: 584 (101 FN)
+
+## Experiment 3: TF-IDF + Logistic Regression (Balanced Weights)
+- **Date:** 2026-10-11
+- **Architecture:** `LogisticRegression(C=1.0, class_weight='balanced', solver='lbfgs', random_state=42)`
+- **Features:** Same TF-IDF (30,000 unigrams + bigrams)
+- **Validation Results:**
+  - Accuracy: 0.9208
+  - Macro-F1: 0.8886
+  - Criminal Recall: **0.9431** | Criminal Precision: 0.7391 | Criminal F1: 0.8287
+  - Civil Recall: 0.9151 | Civil Precision: 0.9844 | Civil F1: 0.9485
+- **Confusion Matrix:** True Civil Pred Civil: 2,459 (228 FP) | True Crim Pred Crim: 646 (39 FN)
+- **Observation:** `class_weight='balanced'` boosted Criminal Recall from 85.26% to 94.31% (dropping false negatives from 101 to 39).
+
+## Experiment 4: TF-IDF + Linear SVM (Default Weights)
+- **Date:** 2026-10-11
+- **Architecture:** `LinearSVC(C=1.0, class_weight=None, dual='auto', random_state=42)`
+- **Features:** Same TF-IDF (30,000 unigrams + bigrams)
+- **Validation Results:**
+  - Accuracy: **0.9404**
+  - Macro-F1: 0.9100
+  - Criminal Recall: 0.8847 | Criminal Precision: **0.8324** | Criminal F1: 0.8577
+  - Civil Recall: **0.9546** | Civil Precision: 0.9701 | Civil F1: 0.9623
+- **Confusion Matrix:** True Civil Pred Civil: 2,565 (122 FP) | True Crim Pred Crim: 606 (79 FN)
+
+## Experiment 5: TF-IDF + Linear SVM (Balanced Weights) — [TOP VALIDATION MODEL]
+- **Date:** 2026-10-11
+- **Architecture:** `LinearSVC(C=1.0, class_weight='balanced', dual='auto', random_state=42)`
+- **Features:** Same TF-IDF (30,000 unigrams + bigrams)
+- **Validation Results:**
+  - Accuracy: 0.9386
+  - **Macro-F1:** **0.9107** (Best overall)
+  - **Criminal Recall:** **0.9343** (640 / 685 identified, only 45 FN)
+  - **Criminal Precision:** 0.7980
+  - **Criminal F1:** **0.8608** (Best overall)
+  - **Civil Recall:** 0.9397 | Civil Precision: **0.9825** | Civil F1: 0.9606
+- **Confusion Matrix:** True Civil Pred Civil: 2,525 (162 FP) | True Crim Pred Crim: 640 (45 FN)
+- **Artifact Saved:** `models/linear_svm_balanced.joblib`
 
 ---
 
@@ -160,11 +219,13 @@ LegalLens/
 ├── docs/
 │   ├── LegalLensBackup.md              # Living persistent memory / handoff document
 │   ├── milestone_1_dataset_audit.md    # Detailed audit report on raw Jud-IPL dataset
-│   └── milestone_2_eda_report.md       # Comprehensive EDA report (in progress)
+│   ├── milestone_2_eda_report.md       # Comprehensive EDA report
+│   ├── milestone_3_cleaning_and_split_report.md  # Data cleaning and split report
+│   └── milestone_4_baseline_and_classical_models.md # Baseline and classical models benchmark report
 ├── data/
 │   ├── raw/                            # Pristine raw CSV (case_files_total.csv, git-ignored)
 │   ├── interim/                        # Cleaned / deduplicated data artifacts (git-ignored)
-│   └── processed/                      # Final train/val/test splits (git-ignored)
+│   └── processed/                      # Final train/val/test splits & frozen test IDs (git-ignored)
 ├── notebooks/
 │   └── 01_dataset_eda.ipynb            # Interactive EDA notebook
 ├── src/
@@ -173,19 +234,22 @@ LegalLens/
 │   ├── data_loader.py                  # Validated dataset loading utility
 │   ├── data_audit.py                   # Milestone 1 audit script
 │   ├── eda.py                          # Milestone 2 exploratory data analysis script
-│   ├── preprocessing.py                # Text cleaning & normalization (Milestone 3)
-│   ├── dataset_split.py                # Contamination-free stratified splitting (Milestone 3)
-│   ├── features.py                     # TF-IDF vectorization (Milestone 4)
-│   ├── models.py                       # Baseline and classical ML classifiers (Milestone 4/5)
-│   ├── train.py                        # Training pipeline orchestrator (Milestone 4/5)
-│   ├── evaluate.py                     # Metrics and error analysis (Milestone 6/7)
+│   ├── preprocessing.py                # Milestone 3 cleaning & deduplication module
+│   ├── dataset_split.py                # Milestone 3 contamination-free stratified splitting & test freezing
+│   ├── features.py                     # Milestone 4 TF-IDF vectorization module
+│   ├── models.py                       # Milestone 4 baseline, Logistic Regression, Linear SVM factory
+│   ├── train.py                        # Milestone 4 training & benchmarking orchestrator
+│   ├── evaluate.py                     # Milestone 4 metrics, reports, and confusion matrix plotter
 │   └── predict.py                      # Unified prediction pipeline (Milestone 9)
 ├── app/
 │   └── streamlit_app.py                # Streamlit UI (Milestone 10)
 ├── tests/
-│   └── __init__.py                     # Pytest suite
+│   ├── __init__.py                     # Pytest suite
+│   ├── test_preprocessing.py           # Unit tests for text normalization & hashing
+│   ├── test_dataset_split.py           # Unit tests for split shapes, zero contamination & frozen test
+│   └── test_models.py                  # Unit tests for model pipelines & inference sanity
 └── outputs/
-    ├── figures/                        # Generated PNG charts (git-ignored)
+    ├── figures/                        # Generated PNG charts & confusion matrices (git-ignored)
     ├── reports/                        # Classification reports (git-ignored)
     └── metrics/                        # JSON metrics summaries (git-ignored)
 ```
@@ -202,6 +266,8 @@ LegalLens/
   - Created `docs/LegalLensBackup.md` as living handoff document.
 - **`3a6d47c` (`feature/milestone-1-dataset-audit`):** `feat(eda): implement Milestone 2 EDA pipeline, forensic analysis, notebook, and report`
   - Created `src/eda.py`, `notebooks/01_dataset_eda.ipynb`, `docs/milestone_2_eda_report.md`, updated backup.
+- **`1a53bc2` (`feature/milestone-1-dataset-audit`):** `feat(cleaning): implement Milestone 3 data cleaning, deduplication, and stratified 80/10/10 split`
+  - Created `src/preprocessing.py`, `src/dataset_split.py`, `tests/test_preprocessing.py`, `tests/test_dataset_split.py`, `docs/milestone_3_cleaning_and_split_report.md`.
 
 ---
 
@@ -211,14 +277,13 @@ LegalLens/
 - [x] **Milestone 1: Dataset Acquisition & Audit** (Complete)
 - [x] **Milestone 2: Exploratory Data Analysis (EDA)** (Complete)
 - [x] **Milestone 3: Data Cleaning & Stratified Splitting** (Complete)
-- [ ] **Milestone 4: Majority Baseline & Logistic Regression** (Next)
-- [ ] **Milestone 5: TF-IDF & Linear SVM**
-- [ ] **Milestone 6: Model Comparison & Evaluation**
-- [ ] **Milestone 7: Error Analysis**
-- [ ] **Milestone 8: Optional Transformer Experiment**
-- [ ] **Milestone 9: Final Prediction Pipeline**
-- [ ] **Milestone 10: Streamlit Application**
-- [ ] **Milestone 11: Comprehensive Tests, Documentation & Viva Preparation**
+- [x] **Milestone 4: Majority Baseline & Logistic Regression & Linear SVM** (Complete)
+- [ ] **Milestone 5: Model Comparison & Tuning / Naive Bayes** (Next)
+- [ ] **Milestone 6: Error Analysis**
+- [ ] **Milestone 7: Optional Transformer Experiment**
+- [ ] **Milestone 8: Final Prediction Pipeline**
+- [ ] **Milestone 9: Streamlit Application**
+- [ ] **Milestone 10: Final Test Set Evaluation & Viva Defense Preparation**
 
 ---
 
@@ -226,27 +291,21 @@ LegalLens/
 
 1. **2026-10-11 — Primary Task Selection:**
    - *Decision:* Binary whole-judgment classification (Civil vs. Criminal).
-   - *Reason:* Well-defined legal distinction, robust dataset availability, directly connected to course objectives.
-   - *Rejected:* Sentence-level rhetorical roles (not whole-judgment) and outcome prediction (unreliable labels / different task).
 2. **2026-10-11 — Dataset Selection:**
    - *Decision:* Jud-IPL adopted as official primary dataset.
-   - *Reason:* Only available Indian corpus with verified whole-judgment Civil/Criminal annotations.
-   - *Rejected:* NyayaAnumana (15.1 GB, outcome prediction only, no category target).
 3. **2026-10-11 — Feature Input Boundary:**
    - *Decision:* Only the `judgement` text is provided to the classifier.
-   - *Reason:* Prevents procedural metadata leakage (`case_type`, `case_info`, `proof_sentence`).
 4. **2026-10-11 — Primary Metric:**
    - *Decision:* Standardize on Macro-F1 and per-class Recall.
-   - *Reason:* Mitigates ~3.9 : 1 Civil dominance from inflating accuracy while hiding Criminal misclassifications.
 5. **2026-10-11 — Duplicate Pruning & Deduplication Policy (Milestone 2):**
    - *Decision:* Prune the 2 conflicting-label clusters (6 rows) and deduplicate to exactly 1 unique judgment text per hash before train/validation/test splitting.
-   - *Reason:* Prevents severe cross-split data leakage/contamination and eliminates conflicting supervisory signals.
 6. **2026-10-11 — Whitespace Normalization Impact (Milestone 3):**
    - *Decision:* Applied internal whitespace/newline collapsing `re.sub(r"\s+", " ", text)`, which merged 6 additional formatting-duplicate pairs into verified consistent clusters, resulting in exactly **33,717 unique clean judgments**.
-   - *Reason:* Eliminates identical text duplicates that differ only by newline wrapping.
 7. **2026-10-11 — Stratified Split & Test Freezing (Milestone 3):**
    - *Decision:* Partitioned into 80/10/10 (26,973 Train / 3,372 Val / 3,372 Test) with `random_state=42`, and froze test IDs/hashes in `data/processed/frozen_test_ids.json`.
-   - *Reason:* Guarantees zero test-leakage and reproducibility across all future experiments.
+8. **2026-10-11 — Model Benchmark Selection (Milestone 4):**
+   - *Decision:* Selected **TF-IDF + Linear SVM (Balanced)** as the leading validation architecture (**0.9107 Macro-F1, 93.43% Criminal Recall, 93.97% Civil Recall**). Logistic Regression (Balanced) retained as strong probabilistic alternative (0.8886 Macro-F1, 94.31% Criminal Recall).
+
 
 ---
 
