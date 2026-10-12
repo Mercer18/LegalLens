@@ -67,30 +67,28 @@ LegalLens/
 
 ---
 
-## 3. Development Roadmap
+## 3. Verified Empirical Performance (Held-Out Frozen Test Set)
 
-We are following an incremental milestone strategy:
+The final model pipeline was evaluated **exactly once** on the held-out frozen test set ($N = 3,372$ judgments, 10% stratified split) under strict zero-leakage conditions:
 
-- **Milestone 0: Workspace & Environment Inspection** (Completed)
-- **Milestone 1: Dataset Audit** (Pending dataset selection confirmation)
-- **Milestone 2: Exploratory Data Analysis (EDA)**
-- **Milestone 3: Data Cleaning & Stratified Splitting**
-- **Milestone 4: Majority Baseline & Logistic Regression**
-- **Milestone 5: TF-IDF & Linear SVM**
-- **Milestone 6: Model Comparison & Evaluation**
-- **Milestone 7: Error Analysis**
-- **Milestone 8: Optional Transformer Experiment**
-- **Milestone 9: Final Prediction Pipeline**
-- **Milestone 10: Streamlit Application**
-- **Milestone 11: Comprehensive Tests, Documentation & Viva Preparation**
+| Metric | Score |
+| :--- | :---: |
+| **Accuracy** | **93.59%** |
+| **Macro-F1** | **90.61%** |
+| **Civil F1-Score** | **95.90%** |
+| **Criminal F1-Score** | **85.33%** |
+| **Civil Recall** | **94.08%** |
+| **Criminal Recall** | **91.68%** |
+
+- **Architecture:** TF-IDF (1–2 ngrams, 40,000 features, sublinear TF) + Linear Support Vector Machine (`LinearSVC`, `class_weight='balanced'`, `C=1.0`).
 
 ---
 
-## 4. Setup & Installation
+## 4. Setup, Local Run & Testing
 
 1. **Clone the repository:**
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/Mercer18/LegalLens.git
    cd LegalLens
    ```
 
@@ -98,3 +96,32 @@ We are following an incremental milestone strategy:
    ```bash
    pip install -r requirements.txt
    ```
+
+3. **Run unit test suite (22/22 tests passing):**
+   ```bash
+   pytest -v tests/
+   ```
+
+4. **Launch the Streamlit Web Application locally:**
+   ```bash
+   streamlit run app/streamlit_app.py
+   ```
+
+---
+
+## 5. Deployment Guide: Streamlit Community Cloud
+
+LegalLens is configured for deployment directly from GitHub to **Streamlit Community Cloud**:
+
+1. **Repository & Branch:**
+   - **Repository:** `Mercer18/LegalLens`
+   - **Branch:** `main` (or active feature branch)
+2. **Application Configuration in Streamlit Cloud Dashboard:**
+   - **Main file path:** `app/streamlit_app.py`
+   - **Python version:** `3.11` or `3.12` or `3.13`
+3. **Artifact Resolution:**
+   - The production model pipeline (`models/final_linear_svm_pipeline.joblib`, 2.05 MB) is tracked and included directly in the repository via `.gitignore` whitelisting.
+   - Raw datasets, interim parquets, and intermediate models remain completely ignored.
+   - Zero external APIs, secrets, or cloud storage buckets are required.
+4. **Click Deploy:**
+   - Streamlit Cloud automatically installs dependencies from `requirements.txt` and starts the app.

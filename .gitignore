@@ -36,6 +36,7 @@ secrets.toml
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+frndswork/
 
 # ==============================================================================
 # Datasets (Keep directory structure with .gitkeep, ignore all raw/processed data)
@@ -66,7 +67,10 @@ data/processed/*
 # ==============================================================================
 models/*
 !models/.gitkeep
+# Allow locked production model artifact for Streamlit Cloud deployment (<2.1 MB)
+!models/final_linear_svm_pipeline.joblib
 *.joblib
+!models/final_linear_svm_pipeline.joblib
 *.pkl
 *.pickle
 *.pt

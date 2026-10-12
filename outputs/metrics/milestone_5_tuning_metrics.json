@@ -1,0 +1,260 @@
+{
+  "error_overview": {
+    "total_validation_samples": 3372,
+    "correct_predictions": 3165,
+    "total_errors": 207,
+    "error_rate_pct": 6.14,
+    "false_criminal_count": 162,
+    "false_criminal_pct_of_civil": 6.03,
+    "false_civil_count": 45,
+    "false_civil_pct_of_crim": 6.57
+  },
+  "document_length_and_truncation": {
+    "correct_cases": {
+      "median_words": 2736.0,
+      "mean_words": 2983.87,
+      "p25_words": 1416.0,
+      "p75_words": 4737.0
+    },
+    "error_cases": {
+      "median_words": 3282.0,
+      "mean_words": 3341.86,
+      "p25_words": 1994.5,
+      "p75_words": 5204.0
+    },
+    "truncation_analysis": {
+      "total_truncated_in_val": 0,
+      "pct_val_truncated": 0.0,
+      "truncated_errors_count": 0,
+      "error_rate_among_truncated": 0,
+      "error_rate_among_non_truncated": 6.14,
+      "is_disproportionate": false
+    }
+  },
+  "top_feature_coefficients": {
+    "top_criminal_features": [
+      [
+        "criminal",
+        6.5067
+      ],
+      [
+        "accused",
+        2.4146
+      ],
+      [
+        "prosecution",
+        1.9637
+      ],
+      [
+        "crl",
+        1.9395
+      ],
+      [
+        "bail",
+        1.881
+      ],
+      [
+        "magistrate",
+        1.5679
+      ],
+      [
+        "section",
+        1.5648
+      ],
+      [
+        "state",
+        1.4549
+      ],
+      [
+        "police",
+        1.3795
+      ],
+      [
+        "offence",
+        1.3311
+      ],
+      [
+        "special judge",
+        1.3299
+      ],
+      [
+        "sentence",
+        1.3189
+      ],
+      [
+        "criminal writ",
+        1.2927
+      ],
+      [
+        "trial court",
+        1.252
+      ],
+      [
+        "criminal contempt",
+        1.2325
+      ]
+    ],
+    "top_civil_features": [
+      [
+        "civil",
+        -17.2223
+      ],
+      [
+        "civil hospital",
+        -7.9939
+      ],
+      [
+        "costs",
+        -3.4163
+      ],
+      [
+        "civil court",
+        -3.2086
+      ],
+      [
+        "suit",
+        -2.9885
+      ],
+      [
+        "civil criminal",
+        -2.9561
+      ],
+      [
+        "civil suit",
+        -2.5696
+      ],
+      [
+        "surgeon",
+        -2.556
+      ],
+      [
+        "civil appeal",
+        -1.9107
+      ],
+      [
+        "civil sessions",
+        -1.7592
+      ],
+      [
+        "order costs",
+        -1.7425
+      ],
+      [
+        "costs appeal",
+        -1.7124
+      ],
+      [
+        "civil nature",
+        -1.568
+      ],
+      [
+        "civil procedure",
+        -1.5625
+      ],
+      [
+        "city civil",
+        -1.5353
+      ]
+    ]
+  },
+  "representative_error_case_studies": [
+    {
+      "case_id": "1921207.txt",
+      "ground_truth": "civil",
+      "prediction": "criminal",
+      "failure_pattern": "Contempt of Court Jurisdictional Overlap",
+      "word_count": 1151,
+      "text_preview": "date of judgment 06/09/2001 bench syed shah mohammed quadri s.n. phukan judgment judgment 2001 supp 2 scr 622 the following order of the court was delivered this contempt petition is filed by the state of kerala complaining that the dignity and authority of the apex court are undermined by the respondents by publishing a three column news on the fr...",
+      "explanation": "Civil contempt proceedings arising from disobedience of civil orders frequently invoke criminal terminology ('punishment', 'imprisonment', 'contempt of courts act'), causing the model to misclassify."
+    },
+    {
+      "case_id": "837290.txt",
+      "ground_truth": "civil",
+      "prediction": "criminal",
+      "failure_pattern": "Article 32/226 Writ Involving Criminal Investigations",
+      "word_count": 2938,
+      "text_preview": "arising out of slp criminal number 1552 of 2006 dalveer bhandari, j. leave granted. this appeal is directed against the judgment of the high court of judicature at bombay dated 23.1.2006 in criminal revision application number458/2005 and criminal revision application number11 of 2006. the appellants in this appeal had been convicted by the additio...",
+      "explanation": "A civil writ petition litigating police inaction or seeking CBI investigation contains heavy penal vocabulary ('police', 'investigation', 'offence'), overriding civil procedural markers."
+    },
+    {
+      "case_id": "1438663.txt",
+      "ground_truth": "criminal",
+      "prediction": "civil",
+      "failure_pattern": "Anti-Corruption & Public Servant Disciplinary Overlap",
+      "word_count": 3377,
+      "text_preview": "being some of the accused along with 152 others involved in what is popularly known as coimbatore bomb blast case, the petitioners have prayed for the transfer of case prc number 54 of 1998 pending in the court of fcj magistrate court, coimbatore, tamil nadu entitled state v. abdul nazir madani and others to any sessions court in the state of keral...",
+      "explanation": "Criminal corruption trials against civil servants discuss departmental inquiries, service rules, and administrative orders, which heavily triggers civil revenue/government features."
+    },
+    {
+      "case_id": "1631729.txt",
+      "ground_truth": "criminal",
+      "prediction": "civil",
+      "failure_pattern": "Quasi-Criminal Commercial & Economic Offenses",
+      "word_count": 2202,
+      "text_preview": "to the petitioner from may 1997 to april, 1998 as the same was earlier rejected by this court. hence, it is ordered that bandhu prakash pal is entitled to get maintenance till 11.5.1997, bandhu priya pal is entitled to get maintenance till 11.5.2003 i.e., the date of her marriage and bandhu priti pal is entitled to get maintenance till may, 2004, a...",
+      "explanation": "Section 138 Negotiable Instruments Act or corporate financial crimes discuss banking transactions, commercial agreements, and debts, biasing the classifier toward Civil."
+    }
+  ],
+  "tuning_benchmark_results": [
+    {
+      "experiment": "Feature Tuning: 40,000 features, ngram (1,2), C=1.0",
+      "macro_f1": 0.9148,
+      "criminal_recall": 0.9372,
+      "criminal_precision": 0.8065,
+      "criminal_f1": 0.867,
+      "civil_recall": 0.9427,
+      "civil_f1": 0.9626,
+      "accuracy": 0.9416
+    },
+    {
+      "experiment": "Tuning C: Linear SVM (C=2.0, Balanced, 30k features, ngram (1,2))",
+      "macro_f1": 0.9136,
+      "criminal_recall": 0.9168,
+      "criminal_precision": 0.8177,
+      "criminal_f1": 0.8644,
+      "civil_recall": 0.9479,
+      "civil_f1": 0.9628,
+      "accuracy": 0.9416
+    },
+    {
+      "experiment": "Baseline (C=1.0, Balanced, 30k features, ngram (1,2))",
+      "macro_f1": 0.9107,
+      "criminal_recall": 0.9343,
+      "criminal_precision": 0.798,
+      "criminal_f1": 0.8608,
+      "civil_recall": 0.9397,
+      "civil_f1": 0.9606,
+      "accuracy": 0.9386
+    },
+    {
+      "experiment": "Feature Tuning: Unigrams only (1,1), C=1.0, 30k features",
+      "macro_f1": 0.9081,
+      "criminal_recall": 0.9299,
+      "criminal_precision": 0.7943,
+      "criminal_f1": 0.8568,
+      "civil_recall": 0.9386,
+      "civil_f1": 0.9595,
+      "accuracy": 0.9368
+    },
+    {
+      "experiment": "Tuning C: Linear SVM (C=0.5, Balanced, 30k features, ngram (1,2))",
+      "macro_f1": 0.9052,
+      "criminal_recall": 0.9445,
+      "criminal_precision": 0.7776,
+      "criminal_f1": 0.853,
+      "civil_recall": 0.9311,
+      "civil_f1": 0.9573,
+      "accuracy": 0.9339
+    },
+    {
+      "experiment": "Tuning C: Linear SVM (C=0.2, Balanced, 30k features, ngram (1,2))",
+      "macro_f1": 0.8934,
+      "criminal_recall": 0.9489,
+      "criminal_precision": 0.7471,
+      "criminal_f1": 0.836,
+      "civil_recall": 0.9181,
+      "civil_f1": 0.9509,
+      "accuracy": 0.9244
+    }
+  ]
+}
