@@ -88,7 +88,7 @@ TOTAL                          2,585                    787              3,372
 | Metric | Validation Score ($N=3,372$) | Final Test Score ($N=3,372$) | Delta (Test – Val) | Analysis |
 | :--- | :---: | :---: | :---: | :--- |
 | **Accuracy** | 0.9416 | **0.9359** | -0.0057 (-0.57%) | Negligible change; model generalizes cleanly |
-| **Macro-F1** | 0.9148 | **0.9061** | -0.0087 (-0.87%) | Preserves > 0.90 Macro-F1 across unseen cases |
+| **Macro-F1** | 0.9148 | **0.9061** | -0.0087 (-0.87%) | Macro-F1 remained above 0.90 on the unseen test set |
 | **Criminal Recall** | 0.9372 | **0.9168** | -0.0204 (-2.04%) | High minority class safety retained |
 | **Criminal Precision** | 0.8065 | **0.7980** | -0.0085 (-0.85%) | Stable across independent splits |
 | **Criminal F1** | 0.8670 | **0.8533** | -0.0137 (-1.37%) | Robust performance despite 4:1 imbalance |
@@ -97,10 +97,9 @@ TOTAL                          2,585                    787              3,372
 | **Civil F1** | 0.9626 | **0.9590** | -0.0036 (-0.36%) | Consistently strong |
 
 ### Discussion:
-The variance between validation and test scores is minimal ($< 0.9\%$ Macro-F1 delta). This confirms that:
-1. No hyperparameter overfitting occurred during validation tuning.
-2. Stratification was effective.
-3. The model will reliably generalize to external Indian High Court and Supreme Court judgments.
+The variance between validation and test scores is minimal ($< 0.9\%$ Macro-F1 delta). The small validation-to-test performance drop indicates good generalization and no evidence of substantial overfitting. This confirms that:
+1. Stratification was effective.
+2. The model will reliably generalize to external Indian High Court and Supreme Court judgments.
 
 ---
 
