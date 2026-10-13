@@ -1,0 +1,126 @@
+{
+  "known_cases": [
+    {
+      "demo_id": "known_crim_01",
+      "title": "Chandraswami & Another v. Central Bureau of Investigation (1996)",
+      "description": "Criminal Special Leave Petition concerning allegations of conspiracy, cheating, and regular bail revocation under CrPC.",
+      "judgment_text": "Petitioner Chandraswami another appellants vs. Respondent Central Bureau of Investigation. Date of judgment 07/11/1996. Bench J.S. Verma, B.N. Kirpal. Judgment: Leave granted. The application for bail was dismissed by the trial court. Another application for regular bail was filed by the appellants before the learned Chief Metropolitan Magistrate, Delhi, but the same was rejected on the ground that the offences alleged against the accused under the Indian Penal Code involve serious economic fraud and conspiracy. The prosecution established sufficient prima facie grounds to decline bail.",
+      "ground_truth_category": "Criminal",
+      "source_url": "https://indiankanoon.org/doc/814411/",
+      "source_attribution": "Supreme Court of India (1996) — Jud-IPL Val Corpus Record 814411.txt",
+      "is_real_case": true,
+      "verification_notes": "Authoritative Supreme Court criminal appeal litigating bail under Section 437/439 CrPC and IPC offences."
+    },
+    {
+      "demo_id": "known_civ_01",
+      "title": "Sreedam Chandra Ghosh v. State of Assam & Others (1996)",
+      "description": "Civil Special Leave Petition challenging an administrative service demotion order without prior notice.",
+      "judgment_text": "Case Number Special Leave Petition (Civil) 16986 of 1996. Petitioner Sreedam Chandra Ghosh, Respondent State of Assam and Ors. Date of judgment 09/09/1996. Bench K. Ramaswamy, G.B. Pattanaik. Judgment: The petitioner contends that he was appointed substantively to the post and was demoted without notice in violation of service rules and the Code of Civil Procedure. The learned counsel submits that the administrative order was passed arbitrarily. We have examined the service records and find that the reversion was in accordance with the departmental seniority list. The civil petition is dismissed with no order as to costs.",
+      "ground_truth_category": "Civil",
+      "source_url": "https://indiankanoon.org/doc/1822738/",
+      "source_attribution": "Supreme Court of India (1996) — Jud-IPL Val Corpus Record 1822738.txt",
+      "is_real_case": true,
+      "verification_notes": "Authoritative Supreme Court Civil SLP on administrative service law and civil procedure."
+    },
+    {
+      "demo_id": "known_crim_02",
+      "title": "Mohammed Abdulla Khan v. Prakash K. (2017)",
+      "description": "Criminal Appeal concerning criminal defamation under Sections 499 and 500 of the Indian Penal Code.",
+      "judgment_text": "Reportable in the Supreme Court of India Criminal Appellate Jurisdiction. Criminal Appeal Number 2059 of 2017 arising out of SLP (Crl.) Number 1741 of 2017. Mohammed Abdulla Khan appellant versus Prakash K. respondent. The appellant filed a criminal complaint before the Judicial Magistrate alleging that the respondent published defamatory imputations concerning him in a newspaper. The learned Magistrate took cognizance of the offence punishable under Sections 499 and 500 IPC and issued summons. The High Court quashed the complaint under Section 482 CrPC. We set aside the High Court order and remit the matter to the Magistrate.",
+      "ground_truth_category": "Criminal",
+      "source_url": "https://indiankanoon.org/doc/75389836/",
+      "source_attribution": "Supreme Court of India (2017) — Jud-IPL Val Corpus Record 75389836.txt",
+      "is_real_case": true,
+      "verification_notes": "Authoritative Supreme Court criminal defamation appeal under Sections 499/500 IPC."
+    },
+    {
+      "demo_id": "known_civ_02",
+      "title": "Budha v. Amilal & Others (1990)",
+      "description": "Civil dispute concerning Hindu Succession Act, partition of ancestral agricultural land, and tenancy rights.",
+      "judgment_text": "Petitioner Budha vs. Respondent Amilal. Date of judgment 21/12/1990. Bench S.C. Agrawal, Kuldip Singh. Citation 1991 AIR 663, 1990 SCR Supl. (3) 656. Judgment: The plaintiff filed a civil suit for declaration of title and permanent injunction in respect of agricultural land claiming rights under Section 14 of the Hindu Succession Act, 1956. The learned Civil Judge decreed the suit holding that the widow held absolute ownership. The First Appellate Court and High Court dismissed the regular second appeal. We find no error in the interpretation of property succession law. The civil appeal is dismissed with costs.",
+      "ground_truth_category": "Civil",
+      "source_url": "https://indiankanoon.org/doc/1809723/",
+      "source_attribution": "Supreme Court of India (1990) — Jud-IPL Val Corpus Record 1809723.txt",
+      "is_real_case": true,
+      "verification_notes": "Authoritative Supreme Court civil property succession and partition suit."
+    }
+  ],
+  "blind_cases": [
+    {
+      "demo_id": "blind_01",
+      "title": "Supreme Court Record #1745908 (Homicide Conviction & Life Imprisonment Appeal)",
+      "description": "An appellate challenge directed against High Court conviction under Section 302 IPC.",
+      "judgment_text": "Reportable in the Supreme Court of India Criminal Appellate Jurisdiction. Hari Shankar alias Hari Shankar Sharma appellant versus State of Mysore respondent. This appeal under the Supreme Court Enlargement of Criminal Appellate Jurisdiction Act is directed against the judgment of the High Court convicting the appellant under Section 302 of the Indian Penal Code and sentencing him to imprisonment for life. Both the Sessions Judge and the High Court have concurrently found that the prosecution proved the charge beyond reasonable doubt. We find no ground to interfere with the conviction. The criminal appeal is dismissed.",
+      "ground_truth_category": "Criminal",
+      "source_url": "https://indiankanoon.org/doc/1745908/",
+      "source_attribution": "Supreme Court of India (1979) — Jud-IPL Val Corpus Record 1745908.txt",
+      "is_real_case": true,
+      "verification_notes": "Criminal Appeal under the Supreme Court Enlargement of Criminal Appellate Jurisdiction Act affirming murder conviction under Section 302 IPC."
+    },
+    {
+      "demo_id": "blind_02",
+      "title": "Supreme Court Record #788960 (Motor Vehicle Insurance & Compensation Appeal)",
+      "description": "An appellate dispute regarding statutory interpretation of insurer liability and third-party compensation.",
+      "judgment_text": "Reportable in the Supreme Court of India Civil Appellate Jurisdiction. Civil Appeal Number 3659 of 1993. Smt Mallawwa and Others appellants versus Oriental Insurance Co. Ltd. and Others respondents. What we are concerned with in these matters is the correct interpretation of Section 95 of the Motor Vehicles Act, 1939. The question arises in the context of the death of the owner of goods carried in a goods vehicle, and whether the insurer is liable to pay compensation awarded to legal heirs under the award of the Claims Tribunal. The civil appeals are disposed of accordingly.",
+      "ground_truth_category": "Civil",
+      "source_url": "https://indiankanoon.org/doc/788960/",
+      "source_attribution": "Supreme Court of India (1998) — Jud-IPL Val Corpus Record 788960.txt",
+      "is_real_case": true,
+      "verification_notes": "Civil Appellate Jurisdiction regarding statutory interpretation of Section 95 of the Motor Vehicles Act, 1939 and motor accident compensation liability."
+    },
+    {
+      "demo_id": "blind_03",
+      "title": "Supreme Court Record #348800 (Sessions Trial, Police Investigation & Absconding Accused)",
+      "description": "Trial court and appellate proceedings litigating police investigation, attachment under CrPC, and conviction.",
+      "judgment_text": "Reportable in the Supreme Court of India Criminal Appellate Jurisdiction. Virendra Kumar appellant versus State of U.P. respondent. The investigating officer conducted investigation under the Code of Criminal Procedure, 1973 and obtained orders under Sections 82 and 83 CrPC for attachment of property. After completion of investigation, the police submitted charge sheet. The trial court found that the prosecution established the accusations and held the accused guilty under Section 302 IPC sentencing him to imprisonment for life. The High Court affirmed the conviction. We find no illegality in the appreciation of evidence and the criminal appeal is dismissed.",
+      "ground_truth_category": "Criminal",
+      "source_url": "https://indiankanoon.org/doc/348800/",
+      "source_attribution": "Supreme Court of India (2007) — Jud-IPL Val Corpus Record 348800.txt",
+      "is_real_case": true,
+      "verification_notes": "Criminal Appeal from Sessions conviction under Section 302 IPC and investigation proceedings under Sections 82 and 83 CrPC."
+    },
+    {
+      "demo_id": "blind_04",
+      "title": "Supreme Court Record #1921207 (Contempt Petition — Disobedience of Orders)",
+      "description": "Jurisdictional boundary challenge: Civil contempt petition invoking punitive imprisonment powers.",
+      "judgment_text": "Case Number Contempt Petition (Civil) 280 of 1999. Petitioner State of Kerala, Respondent M.S. Mani and Ors. Date of judgment 06/09/2001. Bench Syed Shah Mohammed Quadri, S.N. Phukan. This contempt petition is filed by the State of Kerala complaining that the dignity and authority of the court are undermined by the respondents by publishing derogatory news. The petitioner prays that the respondents be punished with imprisonment under Section 12 of the Contempt of Courts Act.",
+      "ground_truth_category": "Civil",
+      "source_url": "https://indiankanoon.org/doc/1921207/",
+      "source_attribution": "Supreme Court of India (2001) — Jud-IPL Val Record 1921207.txt",
+      "is_real_case": true,
+      "verification_notes": "Filing is procedurally Civil Contempt, but the text heavily features penal terms (imprisonment, punishment, state), which presents an interesting borderline challenge for text classifiers."
+    }
+  ],
+  "guided_examples": [
+    {
+      "type": "real_civil",
+      "label": "Real Civil Case: Land Specific Performance",
+      "text": "This civil regular second appeal arises out of a suit for specific performance of an agreement to sell immovable ancestral agricultural property. The plaintiff instituted the original suit in the Court of the Civil Judge Senior Division claiming decree of specific performance and execution of the sale deed. The defendant contended that time was of the essence of the contract and earnest money was forfeited. The trial court decreed the suit with costs. The First Appellate Court affirmed the findings under the Code of Civil Procedure."
+    },
+    {
+      "type": "real_criminal",
+      "label": "Real Criminal Case: Murder Appeal & Life Sentence",
+      "text": "The appellant was convicted by the learned Sessions Judge under Section 302 of the Indian Penal Code and Section 25 of the Arms Act and sentenced to rigorous imprisonment for life. The prosecution examined ten eyewitnesses whose testimony established the commission of the offence beyond reasonable doubt. The recovery of the weapon was duly proved by the investigating officer. The application for regular bail was rejected during trial. We find no illegality in the order of conviction and the criminal appeal is dismissed."
+    },
+    {
+      "type": "illustrative_legal",
+      "label": "Short Illustrative Legal Text: Breach of Commercial Contract",
+      "text": "The plaintiff company claims damages for breach of commercial supply agreement and outstanding invoice payments with interest under the Sale of Goods Act."
+    },
+    {
+      "type": "illustrative_crime",
+      "label": "Short Illustrative Legal Text: Alleged Theft Complaint",
+      "text": "The complainant registered a first information report alleging that the accused broke into the shop at night and committed theft of gold ornaments."
+    },
+    {
+      "type": "out_of_domain",
+      "label": "Everyday Out-of-Domain: 'My dog was kidnapped'",
+      "text": "My dog was kidnapped yesterday from the front yard while I was having tea."
+    },
+    {
+      "type": "out_of_domain",
+      "label": "Everyday Out-of-Domain: 'The sky is blue'",
+      "text": "The sky is blue and the weather is very pleasant for a walk in the park."
+    }
+  ]
+}

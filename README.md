@@ -4,7 +4,7 @@ NLP-Based Classifier for Indian Court Judgments
 [![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit App](https://img.shields.io/badge/Streamlit-App-FF4B4B.svg)](https://streamlit.io/)
-[![Tests: 22 Passed](https://img.shields.io/badge/tests-22%20passed-brightgreen.svg)](tests/)
+[![Tests: 26 Passed](https://img.shields.io/badge/tests-26%20passed-brightgreen.svg)](tests/)
 
 ---
 
@@ -204,7 +204,7 @@ LegalLens/
 ├── notebooks/           # Exploratory data analysis Jupyter notebook
 ├── outputs/             # Generated figures, confusion matrices, and metrics logs
 ├── src/                 # Preprocessing, feature extraction, training, and prediction modules
-├── tests/               # Automated unit tests across pipeline (22 tests)
+├── tests/               # Automated unit tests across pipeline (26 tests)
 ├── .gitignore           # Git ignore configuration
 ├── README.md            # Technical documentation
 └── requirements.txt     # Python runtime dependencies
