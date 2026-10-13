@@ -187,9 +187,13 @@ print(result)
 
 ## 7. Streamlit Application
 
-LegalLens includes an interactive Streamlit interface for entering a judgment and viewing the model's Civil/Criminal prediction, decision score, and estimated confidence.
+LegalLens includes a minimalist, academic demonstration interface (`app/streamlit_app.py`) organized into three straightforward modes:
 
-The interface incorporates pre-loaded domain samples (a Criminal murder conviction appeal, a Civil specific performance suit, and a Civil motor accident claims appeal), validates text inputs, and displays an explicit academic disclaimer.
+1. **Classify a Judgment:** Primary interface for pasting Indian court judgment text and immediately viewing the predicted category (**Civil** or **Criminal**), estimated confidence, and model diagnostics.
+2. **Try an Example:** Curated selection of illustrative Supreme Court judgment excerpts that can be classified with one click.
+3. **How the Model Works:** Concise four-stage explanation tracing text normalization, TF-IDF vectorization, Linear SVM classification, and prediction output.
+
+The interface incorporates accessible category indicators, validates input lengths, and displays an explicit academic disclaimer.
 
 ---
 
@@ -204,7 +208,7 @@ LegalLens/
 ├── notebooks/           # Exploratory data analysis Jupyter notebook
 ├── outputs/             # Generated figures, confusion matrices, and metrics logs
 ├── src/                 # Preprocessing, feature extraction, training, and prediction modules
-├── tests/               # Automated unit tests across pipeline (26 tests)
+├── tests/               # Automated unit tests across pipeline (27 tests)
 ├── .gitignore           # Git ignore configuration
 ├── README.md            # Technical documentation
 └── requirements.txt     # Python runtime dependencies

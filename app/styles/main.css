@@ -30,114 +30,97 @@
 
 /* App Header Styling */
 .header-container {
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   border-bottom: 1px solid var(--ll-card-border);
 }
 
 .main-title {
-  font-size: 2.1rem;
-  font-weight: 750;
+  font-size: 1.85rem;
+  font-weight: 700;
   letter-spacing: -0.02em;
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.85;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.methodology-pill {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  opacity: 0.75;
+  margin-top: 0.15rem;
+}
+
+/* Category Outcome Badges */
+.badge-civil {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--ll-civil-bg);
+  border: 1px solid var(--ll-civil-border);
+  color: var(--ll-civil-text);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  margin: 0.5rem 0;
+}
+
+.badge-criminal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--ll-crim-bg);
+  border: 1px solid var(--ll-crim-border);
+  color: var(--ll-crim-text);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  margin: 0.5rem 0;
+}
+
+/* Prediction Confidence Line */
+.prediction-confidence {
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Pipeline Step List */
+.pipeline-step {
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  background-color: var(--ll-card-bg);
+  border: 1px solid var(--ll-card-border);
+}
+
+.pipeline-step-header {
+  font-weight: 650;
+  font-size: 0.92rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.subtitle {
-  font-size: 1.05rem;
+.pipeline-step-body {
+  font-size: 0.84rem;
   opacity: 0.85;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.methodology-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.2rem 0.65rem;
-  border-radius: 9999px;
-  background-color: var(--ll-card-bg);
-  border: 1px solid var(--ll-card-border);
-  opacity: 0.9;
-}
-
-/* Generic Theme-Aware Card */
-.ll-card {
-  background-color: var(--ll-card-bg);
-  border: 1px solid var(--ll-card-border);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
-}
-
-/* Category Outcome Badges */
-.badge-civil {
-  display: inline-block;
-  background-color: var(--ll-civil-bg);
-  border: 1px solid var(--ll-civil-border);
-  color: var(--ll-civil-text);
-  font-weight: 700;
-  font-size: 1.2rem;
-  padding: 0.35rem 0.9rem;
-  border-radius: 6px;
-  margin: 0.25rem 0;
-}
-
-.badge-criminal {
-  display: inline-block;
-  background-color: var(--ll-crim-bg);
-  border: 1px solid var(--ll-crim-border);
-  color: var(--ll-crim-text);
-  font-weight: 700;
-  font-size: 1.2rem;
-  padding: 0.35rem 0.9rem;
-  border-radius: 6px;
-  margin: 0.25rem 0;
-}
-
-/* Ground Truth Verification Box */
-.truth-box-correct {
-  background-color: rgba(34, 197, 94, 0.12);
-  border-left: 4px solid #22C55E;
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-  margin-top: 0.75rem;
-}
-
-.truth-box-incorrect {
-  background-color: rgba(245, 158, 11, 0.12);
-  border-left: 4px solid #F59E0B;
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-  margin-top: 0.75rem;
-}
-
-/* NLP Stage Step Cards */
-.pipeline-step-card {
-  background-color: var(--ll-card-bg);
-  border: 1px solid var(--ll-card-border);
-  border-radius: 6px;
-  padding: 0.85rem 1rem;
-  margin-bottom: 0.75rem;
-}
-
-.pipeline-step-title {
-  font-weight: 700;
-  font-size: 0.95rem;
-  margin-bottom: 0.35rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.pipeline-step-desc {
-  font-size: 0.85rem;
-  opacity: 0.85;
-  margin-bottom: 0.5rem;
+  margin-top: 0.25rem;
+  line-height: 1.4;
 }
 
 /* Academic Disclaimer Notice */

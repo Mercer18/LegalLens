@@ -1,18 +1,16 @@
 """
 LegalLens Streamlit Application
-Interactive demonstration interface for whole-judgment classification of Indian court judgments (Civil vs. Criminal).
+Minimalist, elegant academic demonstration interface for Indian court judgment classification.
 
 Architecture & Operating Constraints:
 - Production inference loads the locked, pre-trained model pipeline artifact from disk.
 - Zero retraining, parameter tuning, or threshold alterations from the UI.
 - Input is strictly raw Indian court judgment text (no metadata).
 - Handles empty or invalid inputs gracefully.
-- Clear non-legal-advice disclaimer and theme-aware UI.
-- 4 Dedicated Interactive Modes:
-  Mode A: Test Known Cases (with revealable ground truth & demo accuracy session counter)
-  Mode B: Blind Case Challenge (blind judgment prediction with Indian Kanoon source link verification)
-  Mode C: Analyze Your Own Text (with guided real, short illustrative, & out-of-domain presets)
-  Mode D: Explore the NLP Pipeline (transparent 6-stage NLP inspection with actual feature contributions)
+- Minimalist, calm, academic layout with three clear modes:
+  1. Classify a Judgment
+  2. Try an Example
+  3. How the Model Works
 """
 
 import json
@@ -64,9 +62,9 @@ def get_cached_pipeline():
     return load_model_pipeline()
 
 
-def extract_top_features(text: str, pipeline, top_n: int = 6) -> List[Dict[str, Any]]:
+def extract_top_features(text: str, pipeline, top_n: int = 5) -> List[Dict[str, Any]]:
     """
-    Safely extracts actual active n-gram features and their linear contributions
+    Safely extracts active n-gram features and their linear contributions
     from the fitted TF-IDF vectorizer and LinearSVC classifier.
     Does NOT refit or modify any model parameters.
     """
@@ -97,15 +95,14 @@ def extract_top_features(text: str, pipeline, top_n: int = 6) -> List[Dict[str, 
                 "favors": "Criminal" if contrib > 0 else "Civil",
             })
 
-        # Sort by absolute contribution to the decision margin
         extracted.sort(key=lambda x: abs(x["contribution"]), reverse=True)
         return extracted[:top_n]
     except Exception:
         return []
 
 
-def render_prediction_card(result: Dict[str, Any]):
-    """Renders the standard prediction card with accessible badges and metrics."""
+def render_prediction_output(result: Dict[str, Any], text: str, pipeline):
+    """Renders compact prediction results with clear accessible category distinction."""
     pred_class = result["predicted_class"]
     decision_score = result["decision_score"]
     confidence_pct = result["confidence_prob"] * 100
@@ -113,72 +110,71 @@ def render_prediction_card(result: Dict[str, Any]):
     char_count = result["char_count"]
 
     st.markdown("---")
-    st.markdown("### Model Classification Output")
 
-    # Outcome Badge
+    # Clear, accessible visual distinction with explicit text label
     if pred_class == "Criminal":
         st.markdown(
-            '<div class="badge-criminal">Predicted Category: <strong>Criminal</strong></div>',
+            '<div class="badge-criminal">Predicted category: <strong>CRIMINAL</strong></div>',
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
-            '<div class="badge-civil">Predicted Category: <strong>Civil</strong></div>',
+            '<div class="badge-civil">Predicted category: <strong>CIVIL</strong></div>',
             unsafe_allow_html=True,
         )
 
-    # Metrics Row
-    m1, m2, m3, m4 = st.columns(4)
-    with m1:
-        st.metric(
-            label="Decision Score",
-            value=f"{decision_score:+.3f}",
-            help="Linear SVM signed decision margin (squared hinge loss). Positive indicates Criminal, negative indicates Civil.",
-        )
-    with m2:
-        st.metric(
-            label="Estimated Confidence",
-            value=f"{confidence_pct:.1f}%",
-            help="Heuristic confidence estimate derived via sigmoid transformation of the SVM decision margin: p = 1 / (1 + exp(-margin)). Not a formally calibrated Bayesian probability.",
-        )
-    with m3:
-        st.metric(
-            label="Word Count",
-            value=f"{word_count:,}",
-            help="Total words in normalized judgment text.",
-        )
-    with m4:
-        st.metric(
-            label="Character Count",
-            value=f"{char_count:,}",
-            help="Total characters in normalized judgment text.",
+    # Compact estimated confidence line
+    st.markdown(
+        f'<div class="prediction-confidence">'
+        f'Estimated confidence: <strong>{confidence_pct:.1f}%</strong> '
+        f'<span style="opacity: 0.7; font-size: 0.85rem;">(heuristic estimate derived from decision margin)</span>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    # Compact Model Details Expander
+    with st.expander("Model details"):
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.metric("Decision score", f"{decision_score:+.3f}")
+        with c2:
+            st.metric("Word count", f"{word_count:,}")
+        with c3:
+            st.metric("Character count", f"{char_count:,}")
+
+        st.caption(
+            "Note: Linear SVM classifiers optimize margin distance rather than cross-entropy loss. "
+            "Estimated confidence is computed using a standard sigmoid transformation of the margin "
+            "(p = 1 / (1 + exp(-|margin|))) and is not a calibrated Bayesian posterior probability."
         )
 
-    # Decision Balance Distribution
-    st.markdown("#### Decision Weight Distribution")
-    st.progress(float(result["probability_criminal"]))
-    p1, p2 = st.columns(2)
-    p1.caption(f"**Civil Estimate:** {result['probability_civil'] * 100:.1f}%")
-    p2.caption(f"**Criminal Estimate:** {result['probability_criminal'] * 100:.1f}%")
+        # Compact feature influence inspection
+        top_feats = extract_top_features(text, pipeline=pipeline, top_n=5)
+        if top_feats:
+            st.markdown("**Top Influential Language Features in Text:**")
+            feat_cols = st.columns(min(len(top_feats), 5))
+            for i, feat in enumerate(top_feats[:5]):
+                with feat_cols[i]:
+                    chip_class = "token-chip-crim" if feat["favors"] == "Criminal" else "token-chip-civ"
+                    st.markdown(
+                        f'<div class="{chip_class}">'
+                        f'<strong>{feat["feature"]}</strong><br>'
+                        f'<span style="font-size:0.75rem;">Weight: {feat["weight"]:+.2f}</span><br>'
+                        f'<span style="font-size:0.75rem;">Favors: {feat["favors"]}</span>'
+                        f'</div>',
+                        unsafe_allow_html=True,
+                    )
+            st.caption("Feature weights reflect learned model associations across the training corpus, not causal legal reasoning.")
 
 
 def main():
-    # Initialize Session State for Demo Accuracy Tracker
-    if "session_tested_cases" not in st.session_state:
-        st.session_state["session_tested_cases"] = set()
-    if "session_correct_cases" not in st.session_state:
-        st.session_state["session_correct_cases"] = set()
-
-    # App Header
+    # Minimal Header
     st.markdown(
         """
         <div class="header-container">
             <div class="main-title">⚖️ LegalLens</div>
             <div class="subtitle">NLP-Based Classification of Indian Court Judgments</div>
-            <div>
-                <span class="methodology-pill">🔬 TF-IDF (40k n-grams) + Balanced Linear SVM</span>
-                <span class="methodology-pill">📊 Held-Out Test Accuracy: 93.59% | Macro-F1: 0.9061</span>
-            </div>
+            <div class="methodology-pill">TF-IDF (40,000 n-grams) + Linear SVM</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -193,388 +189,229 @@ def main():
 
     demo_data = load_demo_cases()
 
-    # Mode Navigation Tabs
-    tab_known, tab_blind, tab_custom, tab_nlp = st.tabs([
-        "📋 Mode A: Test Known Cases",
-        "🎯 Mode B: Blind Case Challenge",
-        "✍️ Mode C: Analyze Your Own Text",
-        "🔍 Mode D: Explore the NLP Pipeline",
+    # Three Clean, Minimalist Navigation Modes
+    tab_classify, tab_example, tab_pipeline = st.tabs([
+        "Classify a Judgment",
+        "Try an Example",
+        "How the Model Works",
     ])
 
     # -------------------------------------------------------------
-    # MODE A: TEST KNOWN CASES
+    # 1. CLASSIFY A JUDGMENT (Primary Experience)
     # -------------------------------------------------------------
-    with tab_known:
-        st.markdown("### Mode A: Test Known Cases")
-        st.caption(
-            "Select an authentic court record with known provenance. Run the classifier without seeing the label, "
-            "inspect diagnostics, and then reveal the ground truth to check the model's accuracy."
-        )
+    with tab_classify:
+        st.markdown("### Classify a Judgment")
+        st.caption("Paste an Indian court judgment or excerpt to classify it as Civil or Criminal.")
 
-        known_cases = demo_data.get("known_cases", [])
-        if known_cases:
-            case_titles = [f"{c['title']}" for c in known_cases]
-            selected_idx = st.selectbox(
-                "Select a Curated Case:",
-                options=range(len(case_titles)),
-                format_func=lambda i: case_titles[i],
-                key="mode_a_select",
-            )
-            case = known_cases[selected_idx]
-
-            st.markdown(f"**Overview:** {case['description']}")
-            st.markdown(f"**Source Attribution:** *{case['source_attribution']}*")
-
-            # Judgment Text Area (Display only text to model)
-            text_a = st.text_area(
-                "Judgment Text Excerpt:",
-                value=case["judgment_text"],
-                height=150,
-                key="mode_a_text",
-            )
-
-            # Execution Button
-            col_a1, col_a2 = st.columns([1, 2])
-            with col_a1:
-                classify_a = st.button("⚖️ Classify Judgment", key="btn_classify_a", use_container_width=True)
-
-            if classify_a or f"res_a_{case['demo_id']}" in st.session_state:
-                # Store prediction in session state
-                if classify_a:
-                    st.session_state[f"res_a_{case['demo_id']}"] = predict_judgment(text_a, pipeline=pipeline)
-
-                result_a = st.session_state[f"res_a_{case['demo_id']}"]
-                render_prediction_card(result_a)
-
-                # Reveal Ground Truth
-                st.markdown("---")
-                st.markdown("#### Ground Truth Verification")
-                reveal_a = st.checkbox(
-                    "👁️ Reveal Ground Truth & Compare",
-                    key=f"reveal_a_{case['demo_id']}",
-                )
-
-                if reveal_a:
-                    true_cat = case["ground_truth_category"]
-                    pred_cat = result_a["predicted_class"]
-                    is_correct = (pred_cat.lower() == true_cat.lower())
-
-                    # Update Session Accuracy tracker
-                    st.session_state["session_tested_cases"].add(case["demo_id"])
-                    if is_correct:
-                        st.session_state["session_correct_cases"].add(case["demo_id"])
-                    else:
-                        st.session_state["session_correct_cases"].discard(case["demo_id"])
-
-                    if is_correct:
-                        st.markdown(
-                            f"""
-                            <div class="truth-box-correct">
-                                <strong>✅ Model Prediction Correct!</strong><br>
-                                <strong>Ground Truth:</strong> {true_cat} | <strong>Model Predicted:</strong> {pred_cat}<br>
-                                <em>Provenance:</em> {case['verification_notes']}
-                            </div>
-                            """,
-                            unsafe_allow_html=True,
-                        )
-                    else:
-                        st.markdown(
-                            f"""
-                            <div class="truth-box-incorrect">
-                                <strong>⚠️ Model Misclassification</strong><br>
-                                <strong>Ground Truth:</strong> {true_cat} | <strong>Model Predicted:</strong> {pred_cat}<br>
-                                <em>Provenance:</em> {case['verification_notes']}
-                            </div>
-                            """,
-                            unsafe_allow_html=True,
-                        )
-
-                    st.markdown(f"🔗 [Inspect Original Case Record on Indian Kanoon]({case['source_url']})")
-
-            # Session Accuracy Counter
-            st.markdown("---")
-            total_tested = len(st.session_state["session_tested_cases"])
-            total_correct = len(st.session_state["session_correct_cases"])
-            session_acc = (total_correct / total_tested * 100) if total_tested > 0 else 0.0
-
-            sc1, sc2, sc3 = st.columns([2, 1, 1])
-            sc1.markdown(f"**Demo Session Accuracy:** `{total_correct} / {total_tested}` cases verified ({session_acc:.1f}%)")
-            sc1.caption("Calculated only from curated demo cases evaluated and revealed in this session.")
-            with sc3:
-                if st.button("Reset Session Stats", key="reset_stats_btn"):
-                    st.session_state["session_tested_cases"].clear()
-                    st.session_state["session_correct_cases"].clear()
-                    st.rerun()
-
-    # -------------------------------------------------------------
-    # MODE B: BLIND CASE CHALLENGE
-    # -------------------------------------------------------------
-    with tab_blind:
-        st.markdown("### Mode B: Blind Case Challenge")
-        st.caption(
-            "Evaluate a case without any prior indication of jurisdiction. Review the text, observe the model's "
-            "predicted class, independently inspect the official court link, and then reveal the curated label."
-        )
-
-        blind_cases = demo_data.get("blind_cases", [])
-        if blind_cases:
-            b_titles = [f"{b['title']} — {b['description']}" for b in blind_cases]
-            b_idx = st.selectbox(
-                "Select a Blind Challenge Case:",
-                options=range(len(b_titles)),
-                format_func=lambda i: b_titles[i],
-                key="mode_b_select",
-            )
-            b_case = blind_cases[b_idx]
-
-            text_b = st.text_area(
-                "Unlabeled Judgment Excerpt:",
-                value=b_case["judgment_text"],
-                height=140,
-                key="mode_b_text",
-            )
-
-            col_b1, col_b2 = st.columns([1, 2])
-            with col_b1:
-                classify_b = st.button("⚖️ Classify Judgment", key="btn_classify_b", use_container_width=True)
-
-            if classify_b or f"res_b_{b_case['demo_id']}" in st.session_state:
-                if classify_b:
-                    st.session_state[f"res_b_{b_case['demo_id']}"] = predict_judgment(text_b, pipeline=pipeline)
-
-                result_b = st.session_state[f"res_b_{b_case['demo_id']}"]
-                render_prediction_card(result_b)
-
-                # Step 1: Open external source link
-                st.markdown("---")
-                st.markdown("#### Independent Verification")
-                st.markdown(
-                    f"1. 🔗 **[Open Source Record on Indian Kanoon ({b_case['title']})]({b_case['source_url']})**"
-                )
-                st.caption("Inspect the actual docket and bench order in a separate browser tab to verify the procedural jurisdiction.")
-
-                # Step 2: Reveal ground truth
-                reveal_b = st.checkbox(
-                    "2. 👁️ Reveal Curated Ground Truth",
-                    key=f"reveal_b_{b_case['demo_id']}",
-                )
-
-                if reveal_b:
-                    true_b = b_case["ground_truth_category"]
-                    pred_b = result_b["predicted_class"]
-                    match_b = (pred_b.lower() == true_b.lower())
-
-                    if match_b:
-                        st.success(f"**Verified Match!** Curated Ground Truth is **{true_b}** (matches model prediction).")
-                    else:
-                        st.warning(f"**Discrepancy:** Curated Ground Truth is **{true_b}**, but model predicted **{pred_b}**.")
-
-                    st.info(f"**Jurisdictional Context:** {b_case['verification_notes']}")
-
-    # -------------------------------------------------------------
-    # MODE C: ANALYZE YOUR OWN TEXT
-    # -------------------------------------------------------------
-    with tab_custom:
-        st.markdown("### Mode C: Analyze Your Own Text")
-        st.caption(
-            "Paste any Indian court judgment excerpt or test illustrative statements. "
-            "Use the guided presets below to explore model sensitivity and out-of-domain behavior."
-        )
-
-        guided_examples = demo_data.get("guided_examples", [])
-        example_options = ["Custom Input (Clear / Empty)"] + [e["label"] for e in guided_examples]
-
-        selected_preset = st.selectbox(
-            "Load Guided Preset Example (Optional):",
-            options=example_options,
-            index=0,
-            key="preset_select",
-        )
-
-        preset_text = ""
-        if selected_preset != "Custom Input (Clear / Empty)":
-            for e in guided_examples:
-                if e["label"] == selected_preset:
-                    preset_text = e["text"]
-                    break
+        # Default text if set from Example mode
+        default_text = st.session_state.get("classify_input_text", "")
 
         user_text = st.text_area(
-            "Indian Court Judgment Text:",
-            value=preset_text,
+            "Judgment text",
+            value=default_text,
             height=200,
-            placeholder="Paste Indian court judgment text, appeal excerpts, or test sentences here...",
-            key="custom_input_area",
-            help="Prediction is restricted strictly to text. No case numbers, court types, or outcome labels are required.",
+            placeholder="Paste Indian court judgment text or excerpt here...",
+            key="main_judgment_input",
+            label_visibility="collapsed",
         )
 
-        col_c1, col_c2 = st.columns([1, 4])
-        with col_c1:
-            classify_c = st.button("⚖️ Classify Judgment", key="btn_classify_c", use_container_width=True)
+        classify_clicked = st.button("Classify Judgment", key="btn_classify_main", use_container_width=True)
 
-        if classify_c:
-            if not user_text.strip():
-                st.warning("⚠️ Please paste or enter text before classifying.")
+        if classify_clicked:
+            clean_input = user_text.strip()
+            if not clean_input:
+                st.warning("Please paste Indian court judgment text before classifying.")
             else:
-                # Heuristic Out-of-Domain Notice
-                words = user_text.strip().split()
+                words = clean_input.split()
                 if len(words) < 25:
                     st.info(
-                        "ℹ️ **Short / Out-of-Domain Notice:** This input is very short (<25 words) compared to "
-                        "the Indian court judgments on which LegalLens was trained (median length ~2,310 words). "
-                        "The classifier will evaluate learned word patterns, but predictions on short everyday sentences "
-                        "do not constitute a reliable legal determination."
+                        "Input text is short (<25 words). Short or non-legal excerpts lack "
+                        "substantial legal terminology and may result in less reliable classifications."
                     )
 
-                with st.spinner("Analyzing text and evaluating n-gram features..."):
-                    result_c = predict_judgment(user_text, pipeline=pipeline)
+                with st.spinner("Analyzing text..."):
+                    result = predict_judgment(clean_input, pipeline=pipeline)
 
-                if not result_c.get("is_valid", False):
-                    st.error(f"❌ Input validation error: {result_c.get('status', 'Unknown error')}")
+                if not result.get("is_valid", False):
+                    st.error(f"Input validation error: {result.get('status', 'Unknown error')}")
                 else:
-                    render_prediction_card(result_c)
+                    render_prediction_output(result, clean_input, pipeline)
 
     # -------------------------------------------------------------
-    # MODE D: EXPLORE THE NLP PIPELINE
+    # 2. TRY AN EXAMPLE
     # -------------------------------------------------------------
-    with tab_nlp:
-        st.markdown("### Mode D: Explore the NLP Pipeline")
-        st.caption(
-            "Inspect how an Indian court judgment moves through the real 6-stage NLP pipeline: "
-            "from raw characters through statutory normalization, TF-IDF vectorization, and the Linear SVM margin."
+    with tab_example:
+        st.markdown("### Try an Example")
+        st.caption("Select an illustrative judgment excerpt to test the classifier.")
+
+        # Curated selection of 4 diverse, verified examples
+        examples = [
+            {
+                "id": "ex_crim_homicide",
+                "name": "Criminal Appeal: Homicide Conviction & Life Imprisonment",
+                "desc": "Appellate challenge against Sessions conviction under Section 302 IPC.",
+                "text": (
+                    "Reportable in the Supreme Court of India Criminal Appellate Jurisdiction. "
+                    "Hari Shankar alias Hari Shankar Sharma appellant versus State of Mysore respondent. "
+                    "This appeal under the Supreme Court Enlargement of Criminal Appellate Jurisdiction Act is directed "
+                    "against the judgment of the High Court convicting the appellant under Section 302 of the Indian Penal Code "
+                    "and sentencing him to imprisonment for life. Both the Sessions Judge and the High Court have concurrently "
+                    "found that the prosecution proved the charge beyond reasonable doubt. We find no ground to interfere "
+                    "with the conviction. The criminal appeal is dismissed."
+                ),
+                "citation": "Supreme Court of India (1979) — Record 1745908.txt (Indian Kanoon doc/1745908/)",
+            },
+            {
+                "id": "ex_civ_insurance",
+                "name": "Civil Appeal: Motor Vehicle Insurance & Statutory Liability",
+                "desc": "Statutory interpretation of insurer liability and third-party compensation.",
+                "text": (
+                    "Reportable in the Supreme Court of India Civil Appellate Jurisdiction. "
+                    "Civil Appeal Number 3659 of 1993. Smt Mallawwa and Others appellants versus Oriental Insurance Co. Ltd. "
+                    "and Others respondents. What we are concerned with in these matters is the correct interpretation of Section 95 "
+                    "of the Motor Vehicles Act, 1939. The question arises in the context of the death of the owner of goods carried "
+                    "in a goods vehicle, and whether the insurer is liable to pay compensation awarded to legal heirs under the award "
+                    "of the Claims Tribunal. The civil appeals are disposed of accordingly."
+                ),
+                "citation": "Supreme Court of India (1998) — Record 788960.txt (Indian Kanoon doc/788960/)",
+            },
+            {
+                "id": "ex_civ_property",
+                "name": "Civil Suit: Property Succession & Land Partition",
+                "desc": "Dispute concerning Hindu Succession Act, partition of agricultural land, and tenancy rights.",
+                "text": (
+                    "Petitioner Budha vs. Respondent Amilal. Date of judgment 21/12/1990. Bench S.C. Agrawal, Kuldip Singh. "
+                    "The plaintiff filed a civil suit for declaration of title and permanent injunction in respect of agricultural "
+                    "land claiming rights under Section 14 of the Hindu Succession Act, 1956. The learned Civil Judge decreed the suit "
+                    "holding that the widow held absolute ownership. The First Appellate Court and High Court dismissed the regular "
+                    "second appeal. We find no error in the interpretation of property succession law. The civil appeal is dismissed with costs."
+                ),
+                "citation": "Supreme Court of India (1990) — Record 1809723.txt (Indian Kanoon doc/1809723/)",
+            },
+            {
+                "id": "ex_crim_bail",
+                "name": "Criminal SLP: Economic Offence Investigation & Regular Bail",
+                "desc": "Trial court and appellate proceedings concerning regular bail rejection under CrPC.",
+                "text": (
+                    "Petitioner Chandraswami another appellants vs. Respondent Central Bureau of Investigation. "
+                    "Date of judgment 07/11/1996. Bench J.S. Verma, B.N. Kirpal. Judgment: Leave granted. The application for bail "
+                    "was dismissed by the trial court. Another application for regular bail was filed by the appellants before the "
+                    "learned Chief Metropolitan Magistrate, Delhi, but the same was rejected on the ground that the offences alleged "
+                    "against the accused under the Indian Penal Code involve serious economic fraud and conspiracy. The prosecution "
+                    "established sufficient prima facie grounds to decline bail."
+                ),
+                "citation": "Supreme Court of India (1996) — Record 814411.txt (Indian Kanoon doc/814411/)",
+            },
+        ]
+
+        ex_titles = [f"{e['name']}" for e in examples]
+        selected_ex_idx = st.selectbox(
+            "Select an illustrative example:",
+            options=range(len(examples)),
+            format_func=lambda i: ex_titles[i],
+            key="example_selector",
+        )
+        selected_ex = examples[selected_ex_idx]
+
+        st.markdown(f"**Description:** {selected_ex['desc']}")
+
+        ex_text_area = st.text_area(
+            "Example text",
+            value=selected_ex["text"],
+            height=140,
+            key=f"ex_text_{selected_ex['id']}",
+            label_visibility="collapsed",
         )
 
-        nlp_sample_default = (
-            "The appellant was convicted by the learned Sessions Judge under Section 302 of the Indian Penal Code "
-            "and sentenced to rigorous imprisonment for life. Bail application was rejected. Meanwhile, the plaintiff "
-            "filed a civil suit for recovery of possession with costs."
-        )
+        c_btn1, c_btn2 = st.columns([1, 1])
+        with c_btn1:
+            classify_ex = st.button("Classify This Example", key=f"btn_run_{selected_ex['id']}", use_container_width=True)
 
-        nlp_input = st.text_area(
-            "Input Text for Pipeline Inspection:",
-            value=nlp_sample_default,
-            height=120,
-            key="nlp_pipeline_text",
-        )
+        # Optional source citation expander for academic transparency
+        with st.expander("Source attribution"):
+            st.caption(f"Curated from: {selected_ex['citation']}")
 
-        if st.button("🔬 Trace NLP Pipeline Stages", key="btn_trace_nlp", use_container_width=True):
-            if not nlp_input.strip():
-                st.warning("⚠️ Please provide text to inspect.")
-            else:
-                # Stage 1: Raw Input
-                st.markdown(
-                    f"""
-                    <div class="pipeline-step-card">
-                        <div class="pipeline-step-title">Stage 1: Raw Document Ingestion</div>
-                        <div class="pipeline-step-desc">Accepts raw unformatted Indian court judgment text.</div>
-                        <strong>Input Characters:</strong> {len(nlp_input):,} | <strong>Input Words:</strong> {len(nlp_input.split()):,}
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-                # Stage 2: Normalization
-                clean_preview = normalize_legal_text(nlp_input)
-                st.markdown(
-                    f"""
-                    <div class="pipeline-step-card">
-                        <div class="pipeline-step-title">Stage 2: Domain-Aware Text Normalization</div>
-                        <div class="pipeline-step-desc">
-                            Standardizes internal whitespace and lowercases text while strictly preserving statutory references 
-                            (e.g., <code>section 302</code>, <code>article 226</code>) and critical legal negations.
-                        </div>
-                        <code>{clean_preview[:300]}...</code>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-                # Stage 3 & 4: TF-IDF Features
-                tfidf_vec = pipeline.named_steps["tfidf"]
-                X_vec = tfidf_vec.transform([clean_preview])
-                nonzero_count = X_vec.nnz
-                top_feats = extract_top_features(nlp_input, pipeline=pipeline, top_n=8)
-
-                st.markdown(
-                    f"""
-                    <div class="pipeline-step-card">
-                        <div class="pipeline-step-title">Stages 3 & 4: TF-IDF Unigram/Bigram Feature Transformation</div>
-                        <div class="pipeline-step-desc">
-                            Applies sublinear term frequency scaling across the 40,000-term legal vocabulary.
-                        </div>
-                        <strong>Active Non-Zero Features in Document:</strong> {nonzero_count} / 40,000 terms
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-                # Display Active Features
-                if top_feats:
-                    st.markdown("##### Highest-Impact Features in Submitted Text:")
-                    f_cols = st.columns(min(len(top_feats), 4))
-                    for idx, feat in enumerate(top_feats[:4]):
-                        col = f_cols[idx % 4]
-                        chip_class = "token-chip-crim" if feat["favors"] == "Criminal" else "token-chip-civ"
-                        col.markdown(
-                            f"""
-                            <div class="{chip_class}">
-                                <strong>{feat['feature']}</strong><br>
-                                TF-IDF: {feat['tfidf']:.3f}<br>
-                                Weight: {feat['weight']:+.2f}<br>
-                                Favors: {feat['favors']}
-                            </div>
-                            """,
-                            unsafe_allow_html=True,
-                        )
-
-                # Stage 5 & 6: SVM Margin & Decision
-                res_nlp = predict_judgment(nlp_input, pipeline=pipeline)
-                st.markdown(
-                    f"""
-                    <div class="pipeline-step-card">
-                        <div class="pipeline-step-title">Stages 5 & 6: Linear SVM Margin & Classification Decision</div>
-                        <div class="pipeline-step-desc">
-                            The balanced Linear SVM computes the geometric distance from the hyperplane.
-                        </div>
-                        <strong>Signed Decision Score (Margin):</strong> <code>{res_nlp['decision_score']:+.4f}</code><br>
-                        <strong>Estimated Confidence:</strong> <code>{res_nlp['confidence_prob'] * 100:.1f}%</code><br>
-                        <strong>Final Predicted Category:</strong> <strong>{res_nlp['predicted_class']}</strong>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+        if classify_ex:
+            with st.spinner("Classifying example..."):
+                result_ex = predict_judgment(selected_ex["text"], pipeline=pipeline)
+            render_prediction_output(result_ex, selected_ex["text"], pipeline)
 
     # -------------------------------------------------------------
-    # EXPANDABLE ABOUT / MODEL SPECIFICATION
+    # 3. HOW THE MODEL WORKS
     # -------------------------------------------------------------
-    with st.expander("ℹ️ About LegalLens & Official Benchmark Metrics"):
+    with tab_pipeline:
+        st.markdown("### How the Model Works")
+        st.caption("LegalLens classifies Indian court judgments through four structured pipeline stages:")
+
+        # Clean, restrained vertical step layout
         st.markdown(
             """
-            ### Project Overview & Methodology
-            **LegalLens** is an academic Natural Language Processing (NLP) research project engineered for whole-document 
-            binary categorization of Indian court judgments into **Civil** versus **Criminal** jurisdictions.
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">1. Normalize</div>
+                <div class="pipeline-step-body">
+                    Standardizes text by case-folding and collapsing whitespace while strictly preserving statutory references 
+                    (e.g., <em>Section 302 IPC</em>, <em>Article 226</em>) and critical legal negations.
+                </div>
+            </div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">2. Vectorize</div>
+                <div class="pipeline-step-body">
+                    Transforms normalized text into sublinear TF-IDF features across a domain vocabulary of 40,000 unigrams and bigrams, 
+                    capturing legal phrases such as <em>penal code</em>, <em>bail application</em>, and <em>specific performance</em>.
+                </div>
+            </div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">3. Classify</div>
+                <div class="pipeline-step-body">
+                    Computes a signed decision margin using a Linear Support Vector Machine (LinearSVC, C=1.0) with balanced 
+                    class weighting to account for the corpus ratio of ~4:1 Civil to Criminal judgments.
+                </div>
+            </div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-header">4. Predict</div>
+                <div class="pipeline-step-body">
+                    Returns the final predicted category (Civil or Criminal) along with the geometric decision score 
+                    and a heuristic estimated confidence.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-            #### Architecture:
-            - **Text Normalization:** Case-folding and whitespace collapsing with statutory notation preservation.
-            - **Feature Representation:** TF-IDF unigram + bigram representations (`max_features=40,000`, `sublinear_tf=True`, `min_df=3`, `max_df=0.90`).
-            - **Classification Engine:** Linear Support Vector Machine (`LinearSVC`, `class_weight='balanced'`, $C=1.0$).
-            - **Class Balancing:** Balanced class weighting was selected to protect minority Criminal recall across the ~4:1 class imbalance.
+        with st.expander("Technical details"):
+            st.markdown(
+                r"""
+                - **Feature representation:** TF-IDF (1–2 n-grams, `max_features=40,000`, `sublinear_tf=True`, `min_df=3`, `max_df=0.90`)
+                - **Stopword configuration:** Custom stopword list preserving legal negations (`not`, `no`, `nor`, `neither`, `never`, `without`, `against`)
+                - **Classifier:** Linear Support Vector Classifier (`LinearSVC`, `loss="squared_hinge"`, `C=1.0`, `class_weight="balanced"`)
+                - **Decision rule:** $\text{sign}(\mathbf{w}^T \mathbf{x} + b)$, where positive margin indicates Criminal and negative margin indicates Civil.
+                """
+            )
 
-            #### Official Held-Out Test Benchmarks (Frozen Test Partition, N = 3,372):
-            - **Overall Accuracy:** `93.59%`
-            - **Macro-F1 Score:** `0.9061` (remained above 0.90 on unseen data)
-            - **Criminal Recall (Minority Class):** `91.68%`
-            - **Civil F1-Score:** `95.90%` | **Criminal F1-Score:** `85.33%`
-            - *The small validation-to-test performance drop indicates good generalization and no evidence of substantial overfitting.*
+    # -------------------------------------------------------------
+    # ABOUT THIS PROJECT & OFFICIAL BENCHMARKS
+    # -------------------------------------------------------------
+    with st.expander("About this project & evaluation"):
+        st.markdown(
+            """
+            **LegalLens** is an academic NLP research project for whole-document classification of Indian court judgments into Civil versus Criminal categories.
+
+            #### Official Held-Out Test Benchmarks (Frozen Test Set, N = 3,372):
+            - **Accuracy:** `93.59%`
+            - **Macro-F1:** `0.9061`
+            - **Criminal Recall:** `91.68%`
+            - **Civil F1:** `95.90%` | **Criminal F1:** `85.33%`
+
+            *These figures represent empirical held-out evaluation results on a frozen test set and do not constitute a guarantee of correctness for every individual judgment.*
             """
         )
 
-    # Academic Disclaimer
+    # Single Academic Disclaimer at Bottom
     st.markdown(
         """
         <div class="disclaimer-box">
-            <strong>Academic Research Notice:</strong> LegalLens is an academic NLP research project that classifies 
-            Indian court judgment text as Civil or Criminal. It uses statistical language features learned from labeled 
-            examples and does not provide legal advice, interpret statutes, predict case outcomes, or replace professional legal judgment.
+            LegalLens is an academic NLP research project that classifies Indian court judgment text as Civil or Criminal. 
+            It does not provide legal advice or predict case outcomes.
         </div>
         """,
         unsafe_allow_html=True,
