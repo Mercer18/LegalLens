@@ -4,7 +4,7 @@ NLP-Based Classifier for Indian Court Judgments
 [![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit App](https://img.shields.io/badge/Streamlit-App-FF4B4B.svg)](https://streamlit.io/)
-[![Tests: 26 Passed](https://img.shields.io/badge/tests-26%20passed-brightgreen.svg)](tests/)
+[![Tests: 28 Passed](https://img.shields.io/badge/tests-28%20passed-brightgreen.svg)](tests/)
 
 ---
 
@@ -187,13 +187,15 @@ print(result)
 
 ## 7. Streamlit Application
 
-LegalLens includes a minimalist, academic demonstration interface (`app/streamlit_app.py`) organized into three straightforward modes:
+LegalLens includes an interactive, accessible Streamlit web application (`app/streamlit_app.py`) for classifying court judgments and inspecting model reasoning:
 
-1. **Classify a Judgment:** Primary interface for pasting Indian court judgment text and immediately viewing the predicted category (**Civil** or **Criminal**), estimated confidence, and model diagnostics.
-2. **Try an Example:** Curated selection of illustrative Supreme Court judgment excerpts that can be classified with one click.
-3. **How the Model Works:** Concise four-stage explanation tracing text normalization, TF-IDF vectorization, Linear SVM classification, and prediction output.
-
-The interface incorporates accessible category indicators, validates input lengths, and displays an explicit academic disclaimer.
+1. **Academic Data Architecture Banner:** Displays the verified 33,717 judgment corpus breakdown (Cleaned Data: 33,717 | Trained Data: 26,973 | Tested Data: 3,372 Frozen | Demo Data: 3,372).
+2. **Indian Court Judgments Library:** Sidebar featuring a point-wise list of 10 authentic judgments (5 Criminal, 5 Civil) with a one-click dynamic refresh sampling from the demo pool.
+3. **Primary Text Classifier:** Accepts raw text or loaded demo judgments, outputting predicted class, decision margin, estimated confidence, and word/character diagnostics.
+4. **NLP Explainability Suite:**
+   - **Salient Legal N-Grams:** Visual breakdown of n-gram feature attributions ($x_j \cdot w_j$).
+   - **Statutory Entity Detection:** Automatically extracts cited IPC, CrPC, CPC, and statutory Act sections.
+   - **Stylometry & Vocabulary Match:** Computes document Type-Token Ratio (TTR), average sentence length, and overlap with the 40,000-term model vocabulary.
 
 ---
 
@@ -201,14 +203,14 @@ The interface incorporates accessible category indicators, validates input lengt
 
 ```
 LegalLens/
-├── app/                 # Streamlit web application
+├── app/                 # Streamlit web application, nlp utilities, and CSS styles
 ├── data/                # Dataset directory (raw/processed data git-ignored; frozen IDs tracked)
 ├── docs/                # Milestone audit, EDA, benchmark, and test reports
 ├── models/              # Final trained pipeline artifact (whitelisted for deployment)
 ├── notebooks/           # Exploratory data analysis Jupyter notebook
 ├── outputs/             # Generated figures, confusion matrices, and metrics logs
 ├── src/                 # Preprocessing, feature extraction, training, and prediction modules
-├── tests/               # Automated unit tests across pipeline (27 tests)
+├── tests/               # Automated unit tests across pipeline (28 tests)
 ├── .gitignore           # Git ignore configuration
 ├── README.md            # Technical documentation
 └── requirements.txt     # Python runtime dependencies

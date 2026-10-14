@@ -1,5 +1,5 @@
 /* LegalLens Modern Theme-Aware CSS
-   Supports both Streamlit Light and Dark Modes using Streamlit CSS variables.
+   Supports both Streamlit Light and Dark Modes using semantic variables.
 */
 
 :root {
@@ -14,10 +14,12 @@
   --ll-card-bg: rgba(100, 116, 139, 0.08);
   --ll-card-border: rgba(148, 163, 184, 0.25);
   --ll-card-text: inherit;
+  --ll-title-color: #1E293B;
+  --ll-subtitle-color: #475569;
 }
 
 /* Dark mode overrides when Streamlit sets dark background */
-[data-theme="dark"], .stApp[data-theme="dark"] {
+[data-theme="dark"], .stApp[data-theme="dark"], body.st-theme-dark, [data-testid="stAppViewContainer"][data-theme="dark"] {
   --ll-civil-bg: rgba(59, 130, 246, 0.2);
   --ll-civil-border: #60A5FA;
   --ll-civil-text: #93C5FD;
@@ -26,113 +28,93 @@
   --ll-crim-text: #FCA5A5;
   --ll-card-bg: rgba(30, 41, 59, 0.6);
   --ll-card-border: rgba(71, 85, 105, 0.4);
+  --ll-title-color: #F8FAFC;
+  --ll-subtitle-color: #CBD5E1;
 }
 
-/* App Header Styling */
-.header-container {
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.75rem;
-  border-bottom: 1px solid var(--ll-card-border);
-}
 
+
+/* App Header */
 .main-title {
-  font-size: 1.85rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  color: inherit;
+  margin-bottom: 0.2rem;
 }
 
 .subtitle {
-  font-size: 1rem;
-  opacity: 0.85;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
+  font-size: 1.05rem;
+  color: inherit;
+  opacity: 0.78;
+  margin-bottom: 1rem;
 }
 
-.methodology-pill {
-  display: block;
+.metrics-banner {
+  background-color: var(--ll-card-bg);
+  border: 1px solid var(--ll-card-border);
+  padding: 0.65rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: inherit;
+  margin-bottom: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  align-items: center;
+}
+
+/* Sidebar Point-Wise Case List Buttons */
+[data-testid="stSidebar"] div.stButton > button {
+  min-width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  padding: 0.35rem 0.65rem;
   font-size: 0.82rem;
   font-weight: 500;
-  opacity: 0.75;
-  margin-top: 0.15rem;
+  margin-bottom: 0.2rem;
+  border-radius: 5px;
 }
 
-/* Category Outcome Badges */
+/* Category Result Badges */
 .badge-civil {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: inline-block;
   background-color: var(--ll-civil-bg);
   border: 1px solid var(--ll-civil-border);
   color: var(--ll-civil-text);
   font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
-  padding: 0.4rem 1rem;
+  font-size: 1.25rem;
+  padding: 0.45rem 1rem;
   border-radius: 6px;
-  margin: 0.5rem 0;
+  margin: 0.5rem 0 1rem 0;
 }
 
 .badge-criminal {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: inline-block;
   background-color: var(--ll-crim-bg);
   border: 1px solid var(--ll-crim-border);
   color: var(--ll-crim-text);
   font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
-  padding: 0.4rem 1rem;
+  font-size: 1.25rem;
+  padding: 0.45rem 1rem;
   border-radius: 6px;
-  margin: 0.5rem 0;
+  margin: 0.5rem 0 1rem 0;
 }
 
-/* Prediction Confidence Line */
-.prediction-confidence {
-  font-size: 0.95rem;
-  margin-top: 0.25rem;
-  margin-bottom: 0.75rem;
-  opacity: 0.9;
-}
-
-/* Pipeline Step List */
-.pipeline-step {
-  padding: 0.6rem 0.85rem;
-  margin-bottom: 0.5rem;
-  border-radius: 6px;
-  background-color: var(--ll-card-bg);
-  border: 1px solid var(--ll-card-border);
-}
-
-.pipeline-step-header {
-  font-weight: 650;
-  font-size: 0.92rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.pipeline-step-body {
-  font-size: 0.84rem;
-  opacity: 0.85;
-  margin-top: 0.25rem;
-  line-height: 1.4;
-}
-
-/* Academic Disclaimer Notice */
-.disclaimer-box {
-  background-color: var(--ll-card-bg);
-  border-left: 4px solid rgba(148, 163, 184, 0.7);
-  padding: 0.85rem 1.1rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  line-height: 1.45;
-  margin-top: 2rem;
-  opacity: 0.92;
+/* Academic Disclaimer Notice - Small Bottom Footer */
+.footer-disclaimer, .disclaimer-box {
+  margin-top: 5rem;
+  padding-top: 1.2rem;
+  padding-bottom: 2rem;
+  border-top: 1px solid var(--ll-card-border);
+  background: transparent;
+  border-left: none;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: inherit;
+  opacity: 0.65;
+  text-align: center;
 }
 
 /* Button & Controls Optimization */
@@ -150,12 +132,11 @@ div.stButton > button {
   background-color: var(--ll-crim-bg);
   border: 1px solid var(--ll-crim-border);
   color: var(--ll-crim-text);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  font-family: monospace;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  margin: 0.2rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 5px;
+  margin: 0.25rem 0.35rem 0.25rem 0;
 }
 
 .token-chip-civ {
@@ -163,10 +144,22 @@ div.stButton > button {
   background-color: var(--ll-civil-bg);
   border: 1px solid var(--ll-civil-border);
   color: var(--ll-civil-text);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  font-family: monospace;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  margin: 0.2rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 5px;
+  margin: 0.25rem 0.35rem 0.25rem 0;
 }
+
+.citation-chip {
+  display: inline-block;
+  background-color: var(--ll-card-bg);
+  border: 1px solid var(--ll-card-border);
+  color: inherit;
+  font-size: 0.82rem;
+  font-weight: 550;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin: 0.2rem 0.3rem 0.2rem 0;
+}
+
