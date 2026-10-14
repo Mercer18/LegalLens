@@ -94,10 +94,11 @@ def main():
     st.markdown(
         """
         <div class="metrics-banner">
-            <span>Cleaned Data: <b>33,717 Judgments</b></span>
-            <span>Trained Data: <b>26,973</b></span>
-            <span>Tested Data: <b>3,372 (Frozen)</b></span>
-            <span>Demo Data: <b>3,372</b></span>
+            <span>Dataset: <b>53,446 Judgments</b></span>
+            <span>Cleaned Data: <b>33,717 (100%)</b></span>
+            <span>Trained Data: <b>26,973 (80%)</b></span>
+            <span>Tested Data: <b>3,372 (10%)</b></span>
+            <span>Demo Data: <b>3,372 (10%)</b></span>
         </div>
         """,
         unsafe_allow_html=True,

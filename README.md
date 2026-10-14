@@ -189,7 +189,7 @@ print(result)
 
 LegalLens includes an interactive, accessible Streamlit web application (`app/streamlit_app.py`) for classifying court judgments and inspecting model reasoning:
 
-1. **Academic Data Architecture Banner:** Displays the verified 33,717 judgment corpus breakdown (Cleaned Data: 33,717 | Trained Data: 26,973 | Tested Data: 3,372 Frozen | Demo Data: 3,372).
+1. **Academic Data Architecture Banner:** Displays the verified dataset architecture breakdown (Dataset: 53,446 | Cleaned Data: 33,717 (100%) | Trained Data: 26,973 (80%) | Tested Data: 3,372 (10%) | Demo Data: 3,372 (10%)).
 2. **Indian Court Judgments Library:** Sidebar featuring a point-wise list of 10 authentic judgments (5 Criminal, 5 Civil) with a one-click dynamic refresh sampling from the demo pool.
 3. **Primary Text Classifier:** Accepts raw text or loaded demo judgments, outputting predicted class, decision margin, estimated confidence, and word/character diagnostics.
 4. **NLP Explainability Suite:**
