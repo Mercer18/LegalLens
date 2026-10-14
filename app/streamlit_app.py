@@ -93,12 +93,28 @@ def main():
     # Academic Training Corpus & Benchmark Banner (Clean, no emojis)
     st.markdown(
         """
-        <div class="metrics-banner">
-            <span>Dataset: <b>53,446 Judgments</b></span>
-            <span>Cleaned Data: <b>33,717 (100%)</b></span>
-            <span>Trained Data: <b>26,973 (80%)</b></span>
-            <span>Tested Data: <b>3,372 (10%)</b></span>
-            <span>Demo Data: <b>3,372 (10%)</b></span>
+        <div class="metrics-banner-container">
+            <div class="metrics-banner-top">
+                <span>Dataset: <b>53,446 Judgments</b></span>
+            </div>
+            <div class="metrics-banner-grid">
+                <div class="metrics-banner-item">
+                    <span>Cleaned Data: <b>33,717</b></span>
+                    <span class="metrics-banner-pct">(100%)</span>
+                </div>
+                <div class="metrics-banner-item">
+                    <span>Trained Data: <b>26,973</b></span>
+                    <span class="metrics-banner-pct">(80%)</span>
+                </div>
+                <div class="metrics-banner-item">
+                    <span>Tested Data: <b>3,372</b></span>
+                    <span class="metrics-banner-pct">(10%)</span>
+                </div>
+                <div class="metrics-banner-item">
+                    <span>Demo Data: <b>3,372</b></span>
+                    <span class="metrics-banner-pct">(10%)</span>
+                </div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
