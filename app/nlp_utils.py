@@ -205,10 +205,7 @@ def load_validation_cases(
             cat = str(row["category"]).title()
             doc_id = str(row["name"]).replace(".txt", "")
             words = str(row["text"]).split()
-            if len(words) > 400:
-                text = " ".join(words[:400]) + "..."
-            else:
-                text = str(row["text"]).strip()
+            text = " ".join(words[:1000])
                 
             label = f"[{cat}] Indian Kanoon Doc #{doc_id} ({len(words)} words)"
             cases[label] = {

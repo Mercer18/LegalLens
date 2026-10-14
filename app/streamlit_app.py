@@ -83,6 +83,16 @@ def get_cached_pipeline():
     return load_model_pipeline()
 
 
+def slice_excerpt(raw_text: str, n_words: int) -> str:
+    """Slices judgment text to the specified word count excerpt."""
+    if n_words <= 0:
+        return ""
+    words = str(raw_text).split()
+    if len(words) > n_words:
+        return " ".join(words[:n_words]) + "..."
+    return " ".join(words)
+
+
 def main():
     st.markdown('<div class="main-title">⚖️ LegalLens</div>', unsafe_allow_html=True)
     st.markdown(
@@ -134,6 +144,8 @@ def main():
         st.session_state.selected_case_key = None
     if "judgment_text_area" not in st.session_state:
         st.session_state.judgment_text_area = ""
+    if "excerpt_slider_len" not in st.session_state:
+        st.session_state.excerpt_slider_len = 400
 
     # Sidebar: Point-Wise Demo Judgment Library with Refresh (Option 1)
     with st.sidebar:
@@ -144,6 +156,23 @@ def main():
             st.session_state.validation_pool_cases = load_validation_cases(n_per_category=5)
             st.session_state.selected_case_key = None
             st.rerun()
+
+        excerpt_length = st.slider(
+            "Excerpt Length (words):",
+            min_value=0,
+            max_value=1000,
+            value=st.session_state.excerpt_slider_len,
+            step=50,
+            help="Choose how many words to excerpt from the selected judgment (default: 400 words).",
+        )
+
+        # If slider value changes and a case is currently selected, sync text area dynamically
+        if excerpt_length != st.session_state.excerpt_slider_len:
+            st.session_state.excerpt_slider_len = excerpt_length
+            if st.session_state.selected_case_key and st.session_state.selected_case_key in st.session_state.validation_pool_cases:
+                selected_info = st.session_state.validation_pool_cases[st.session_state.selected_case_key]
+                st.session_state.judgment_text_area = slice_excerpt(selected_info["text"], excerpt_length)
+                st.rerun()
 
         crim_cases = [(k, v) for k, v in st.session_state.validation_pool_cases.items() if v.get("category") == "Criminal"]
         civ_cases = [(k, v) for k, v in st.session_state.validation_pool_cases.items() if v.get("category") == "Civil"]
@@ -163,7 +192,7 @@ def main():
                 help=f"Click to load Indian Kanoon Document #{info['doc_id']} into the classification text box",
             ):
                 st.session_state.selected_case_key = k
-                st.session_state.judgment_text_area = info["text"]
+                st.session_state.judgment_text_area = slice_excerpt(info["text"], excerpt_length)
                 st.rerun()
 
         st.markdown("##### 📜 Civil Cases (5)")
@@ -181,7 +210,7 @@ def main():
                 help=f"Click to load Indian Kanoon Document #{info['doc_id']} into the classification text box",
             ):
                 st.session_state.selected_case_key = k
-                st.session_state.judgment_text_area = info["text"]
+                st.session_state.judgment_text_area = slice_excerpt(info["text"], excerpt_length)
                 st.rerun()
 
     st.markdown("### Paste Court Judgment Text")
@@ -190,7 +219,8 @@ def main():
     active_case_info = None
     if st.session_state.selected_case_key and st.session_state.selected_case_key in st.session_state.validation_pool_cases:
         active_case_info = st.session_state.validation_pool_cases[st.session_state.selected_case_key]
-        st.info(f"Loaded from Demo Data: **{st.session_state.selected_case_key}**")
+        actual_words = len(st.session_state.judgment_text_area.split())
+        st.info(f"Loaded from Demo Data: **{st.session_state.selected_case_key}** ({actual_words} words loaded)")
 
     judgment_input = st.text_area(
         label="Indian Court Judgment Text",
@@ -234,7 +264,7 @@ def main():
                 else:
                     st.success(f"### Predicted Class: **Civil**")
 
-                if active_case_info and "category" in active_case_info and active_case_info["text"].strip() == judgment_input.strip():
+                if active_case_info and "category" in active_case_info and judgment_input.strip():
                     expected = active_case_info["category"]
                     if pred_class.lower() == expected.lower():
                         st.caption(f"✓ Validated: Prediction matches Ground Truth in Demo Data (**{expected}**)")
