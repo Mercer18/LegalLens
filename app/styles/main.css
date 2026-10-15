@@ -89,16 +89,71 @@
   margin-top: 0.15rem;
 }
 
-/* Sidebar Point-Wise Case List Buttons */
+/* Sidebar Compact Scaling (80% Scale & Tight Gap Layout) */
+[data-testid="stSidebar"] {
+  zoom: 0.78;
+}
+
+[data-testid="stSidebarContent"] {
+  padding-top: 0.9rem !important;
+  padding-bottom: 0.4rem !important;
+  padding-left: 0.65rem !important;
+  padding-right: 0.65rem !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+  gap: 0.2rem !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stVerticalBlockBorderWrapper"] {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+[data-testid="stSidebar"] h3 {
+  font-size: 0.95rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 0.15rem !important;
+  line-height: 1.2 !important;
+}
+
+[data-testid="stSidebar"] h5 {
+  font-size: 0.8rem !important;
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.1rem !important;
+  line-height: 1.2 !important;
+}
+
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] .stCaption {
+  font-size: 0.72rem !important;
+  margin-bottom: 0.15rem !important;
+  line-height: 1.2 !important;
+}
+
+[data-testid="stSidebar"] div.stButton {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 [data-testid="stSidebar"] div.stButton > button {
-  min-width: 100%;
-  text-align: left;
-  justify-content: flex-start;
-  padding: 0.35rem 0.65rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  margin-bottom: 0.2rem;
-  border-radius: 5px;
+  min-width: 100% !important;
+  min-height: 1.65rem !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  padding: 0.15rem 0.45rem !important;
+  font-size: 0.74rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.06rem !important;
+  border-radius: 4px !important;
+  line-height: 1.2 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSlider"] {
+  margin-top: -0.25rem !important;
+  margin-bottom: -0.25rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* Category Result Badges */
