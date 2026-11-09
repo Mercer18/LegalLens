@@ -251,3 +251,6 @@ If you use or reference the Jud-IPL dataset in academic work, please cite the or
   publisher={Springer}
 }
 ```
+## 11. Project Authors:
+Rishi Srivastava | https://www.linkedin.com/in/rishisrivastava18/
+Kunwar Suryansh | linkedin.com/in/kunwar-suryansh-b3ab5b284
